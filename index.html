@@ -5,130 +5,215 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>บันทึกเหตุการณ์โจรกรรมระดับโลก</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        /* สไตล์พื้นฐาน */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #1e1e2f; 
-            color: #fff;
+            background-color: #121212; 
+            color: #e0e0e0;
             padding: 30px 15px; 
         }
-        .container { 
-            max-width: 800px; 
-            margin: auto; 
-        }
+        .container { max-width: 900px; margin: auto; }
         h1 { 
-            text-align: center; 
-            color: #f39c12; 
-            margin-bottom: 30px;
-            font-size: 2.2em;
+            text-align: center; color: #f39c12; margin-bottom: 30px; font-size: 2.2em;
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
         }
+
+        /* กล่องการ์ดเหตุการณ์ */
         .event-card { 
-            background: #2a2a40; 
-            padding: 25px; 
-            margin-bottom: 20px; 
+            background: #1e1e1e; 
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px; 
             border-radius: 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
             border-left: 6px solid #e74c3c; 
-            transition: transform 0.2s ease;
+            transition: transform 0.3s ease;
         }
-        .event-card:hover {
-            transform: translateY(-5px);
+        @media (min-width: 600px) {
+            .event-card { flex-direction: row; }
         }
-        .date { 
-            color: #e74c3c; 
-            font-weight: bold; 
-            font-size: 1.1em; 
-            letter-spacing: 1px;
+        .event-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(231, 76, 60, 0.2); }
+        .card-img-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
         }
-        .title { 
-            font-size: 1.5em; 
-            margin: 12px 0; 
-            color: #f1f1f1; 
+        @media (min-width: 600px) {
+            .card-img-container { width: 300px; height: auto; }
         }
-        .description { 
-            color: #b0b0c0; 
-            line-height: 1.7; 
-            margin-bottom: 15px;
+        .card-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-content { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+        
+        .date { color: #e74c3c; font-weight: bold; font-size: 1em; letter-spacing: 1px; margin-bottom: 10px; }
+        .title { font-size: 1.5em; margin: 0 0 15px 0; color: #ffffff; }
+        .short-desc { color: #aaaaaa; line-height: 1.6; margin-bottom: 20px; flex: 1; }
+        
+        /* ปุ่ม */
+        .btn {
+            background-color: #e74c3c; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;
+            transition: background 0.3s; width: max-content;
         }
-        .value { 
-            display: inline-block;
-            background-color: #27ae60;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: bold; 
-            font-size: 0.9em;
+        .btn:hover { background-color: #c0392b; }
+
+        /* สไตล์สำหรับ Modal (หน้าต่าง Popup) */
+        .modal {
+            display: none; /* ซ่อนไว้เป็นค่าเริ่มต้น */
+            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            align-items: center; justify-content: center;
+            padding: 20px;
         }
+        .modal-content {
+            background-color: #1e1e1e; padding: 0; border-radius: 10px;
+            max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto;
+            position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute; top: 15px; right: 20px; color: #fff;
+            font-size: 30px; font-weight: bold; cursor: pointer; z-index: 10;
+            background: rgba(0,0,0,0.5); width: 40px; height: 40px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .close-btn:hover { background: #e74c3c; }
+        
+        .modal-img { width: 100%; max-height: 350px; object-fit: cover; border-bottom: 2px solid #333; }
+        .modal-body { padding: 30px; }
+        .modal-title { font-size: 1.8em; color: #f39c12; margin-bottom: 10px; }
+        .modal-value { 
+            display: inline-block; background-color: #27ae60; color: white;
+            padding: 5px 12px; border-radius: 5px; font-weight: bold; font-size: 0.9em; margin-bottom: 20px;
+        }
+        .modal-full-desc { color: #cccccc; line-height: 1.8; margin-bottom: 25px; }
+        .source-link {
+            color: #3498db; text-decoration: none; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .source-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🚨 แฟ้มคดี: เหตุการณ์โจรกรรมครั้งใหญ่ของโลก</h1>
-        <!-- พื้นที่สำหรับแสดงข้อมูลจาก JavaScript -->
+        <h1>🚨 แฟ้มคดี: เหตุการณ์โจรกรรมครั้งประวัติศาสตร์</h1>
         <div id="heist-list"></div>
     </div>
 
+    <!-- โครงสร้าง Modal -->
+    <div id="caseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img id="modalImg" class="modal-img" src="" alt="Heist Image">
+            <div class="modal-body">
+                <div id="modalDate" class="date"></div>
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <div id="modalValue" class="modal-value"></div>
+                <div id="modalFullDesc" class="modal-full-desc"></div>
+                <a id="modalSource" class="source-link" href="#" target="_blank">🔗 อ่านข้อมูลอ้างอิงฉบับเต็ม</a>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 1. ข้อมูลเหตุการณ์จริง (สามารถเพิ่มข้อมูลใหม่ลงใน Array นี้ได้เลย)
+        // 1. ข้อมูลคดี (เพิ่ม URL รูปภาพจริงจาก Wikimedia และข้อมูลเชิงลึก)
         const realHeists = [
             {
                 date: "18 มีนาคม 1990",
                 location: "บอสตัน, สหรัฐอเมริกา",
                 title: "การปล้นพิพิธภัณฑ์ Isabella Stewart Gardner",
-                description: "ชายสองคนปลอมตัวเป็นตำรวจบอสตัน เข้าไปในพิพิธภัณฑ์กลางดึก พวกเขาจับยามมัดไว้และขโมยงานศิลปะระดับมาสเตอร์พีซไป 13 ชิ้น รวมถึงผลงานของ Rembrandt และ Vermeer จนถึงปัจจุบันยังตามงานศิลปะคืนไม่ได้และยังจับใครไม่ได้",
-                estimatedValue: "มูลค่าความเสียหาย: ~500 ล้านดอลลาร์สหรัฐ"
+                shortDesc: "ชายปลอมตัวเป็นตำรวจ ขโมยงานศิลปะระดับมาสเตอร์พีซไป 13 ชิ้น มูลค่ากว่า 500 ล้านดอลลาร์ และยังตามคืนไม่ได้จนถึงทุกวันนี้",
+                fullDesc: "ในช่วงเวลา 01:24 น. หลังวันเซนต์แพทริก ชายสองคนในชุดเครื่องแบบตำรวจบอสตันได้ขอเข้าไปในพิพิธภัณฑ์โดยอ้างว่ามาตรวจความเรียบร้อย ยามรักษาความปลอดภัยละเมิดกฎโดยการเปิดประตูให้ พวกเขาจับยามมัดไว้ที่ห้องใต้ดิน แล้วใช้เวลา 81 นาทีในการตัดภาพวาดออกจากกรอบอย่างใจเย็น <br><br>ภาพที่ถูกขโมยไปรวมถึงผลงานชิ้นเอกของ รอมบรันต์ (Rembrandt) อย่างภาพ 'Christ in the Storm on the Sea of Galilee' (ภาพวาดทิวทัศน์ทะเลชิ้นเดียวของเขา) และผลงานของเฟอร์เมร์ (Vermeer) ปัจจุบันทางพิพิธภัณฑ์ยังคงแขวน 'กรอบรูปเปล่า' เอาไว้ที่เดิม เพื่อรอคอยวันที่ศิลปะเหล่านี้จะกลับมา",
+                estimatedValue: "ความเสียหาย: ~500 ล้านดอลลาร์สหรัฐ",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg/800px-Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg", // ภาพวาดที่ถูกขโมยจริง
+                sourceUrl: "https://en.wikipedia.org/wiki/Isabella_Stewart_Gardner_Museum_theft"
             },
             {
                 date: "15-16 กุมภาพันธ์ 2003",
                 location: "แอนต์เวิร์ป, เบลเยียม",
-                title: "Antwerp Diamond Heist (การปล้นเพชรที่แอนต์เวิร์ป)",
-                description: "กลุ่มโจรชาวอิตาลีที่รู้จักกันในชื่อ 'The School of Turin' เจาะผ่านระบบรักษาความปลอดภัย 10 ชั้นที่ศูนย์เพชรแอนต์เวิร์ป พวกเขาใช้เวลาวางแผนถึง 3 ปีเพื่อขโมยเพชร ทองคำ และเครื่องประดับจากตู้นิรภัย 123 ตู้",
-                estimatedValue: "มูลค่าความเสียหาย: ~100 ล้านดอลลาร์สหรัฐ"
+                title: "Antwerp Diamond Heist",
+                shortDesc: "การปล้นศูนย์กลางเพชรของโลกที่ได้รับการคุ้มกันแน่นหนาที่สุด โดยการหลบหลีกระบบความปลอดภัยถึง 10 ชั้น",
+                fullDesc: "เลโอนาร์โด โนตาร์บาร์โตโล (Leonardo Notarbartolo) หัวหน้าแก๊งชาวอิตาลี เช่าสำนักงานในตึก Antwerp Diamond Center นานถึง 3 ปีเพื่อแฝงตัวและศึกษาระบบความปลอดภัย <br><br>ในวันเกิดเหตุ พวกเขาสามารถหลบหลีกระบบตรวจจับความร้อน, เรดาร์, เซ็นเซอร์แผ่นดินไหว, สนามแม่เหล็ก, และรหัสผ่านที่เปลี่ยนตลอดเวลาได้สำเร็จ โดยไม่ต้องใช้กำลังทำลายตู้เซฟ พวกเขากวาดเพชรไปมหาศาลจนแบกไม่หมด และทิ้งบางส่วนเรี่ยราดบนพื้น โนตาร์บาร์โตโลถูกจับได้ในภายหลังเพราะเพื่อนร่วมแก๊งทิ้ง DNA ไว้บนแซนด์วิชซาลามี่ที่กินไม่หมดในถังขยะใกล้จุดเกิดเหตุ",
+                estimatedValue: "ความเสียหาย: ~100 ล้านดอลลาร์สหรัฐ",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Antwerpen_Diamantkwartier.jpg/800px-Antwerpen_Diamantkwartier.jpg", // ย่านเพชรแอนต์เวิร์ป
+                sourceUrl: "https://en.wikipedia.org/wiki/Antwerp_diamond_heist"
             },
             {
                 date: "8 สิงหาคม 1963",
                 location: "บักกิงแฮมเชอร์, สหราชอาณาจักร",
-                title: "The Great Train Robbery (การปล้นรถไฟครั้งใหญ่)",
-                description: "แก๊งโจร 15 คน ทำการปรับเปลี่ยนสัญญาณไฟเพื่อหยุดรถไฟไปรษณีย์ของ Royal Mail ที่เดินทางจากกลาสโกว์ไปยังลอนดอน พวกเขาขโมยถุงเงินไปได้ 120 ถุงโดยไม่ต้องใช้ปืนยิงแม้แต่นัดเดียว",
-                estimatedValue: "มูลค่าความเสียหาย: 2.6 ล้านปอนด์ (ราว 58 ล้านปอนด์ในปัจจุบัน)"
+                title: "The Great Train Robbery",
+                shortDesc: "การปล้นรถไฟขนเงินของรอยัลเมล์ โดยการปลอมแปลงสัญญาณไฟจราจรของรถไฟ กลายเป็นหนึ่งในการปล้นที่โด่งดังที่สุดในอังกฤษ",
+                fullDesc: "แก๊งโจร 15 คน นำโดย บรูซ เรย์โนลด์ส (Bruce Reynolds) ได้ทำการเอาถุงมือไปครอบสัญญาณไฟสีเขียว และใช้แบตเตอรี่ต่อไฟสีแดงให้สว่าง เพื่อหลอกให้รถไฟไปรษณีย์ที่กำลังเดินทางไปลอนดอนหยุดกลางดึก <br><br>เมื่อรถไฟหยุด พวกเขาบุกเข้าไปตัดตู้โดยสารที่เก็บเงินออกจากขบวน แล้วบังคับให้คนขับขับรถไฟเดินหน้าต่อไปยังสะพาน Bridego ที่มีรถบรรทุกรอรับเงินอยู่ พวกเขาขนถุงเงิน 120 ถุง น้ำหนักรวมกว่า 2.5 ตันหนีไปได้สำเร็จ แต่ถูกจับได้เกือบทั้งแก๊งในเวลาต่อมาเนื่องจากทิ้งรอยนิ้วมือไว้บนกระดานเกมเศรษฐี (Monopoly) ที่พวกเขาเล่นกันที่บ้านซ่อนตัว",
+                estimatedValue: "ความเสียหาย: 2.6 ล้านปอนด์ (ราว 58 ล้านปอนด์ในปัจจุบัน)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Great_train_robbery_bridge_-_geograph.org.uk_-_922253.jpg/800px-Great_train_robbery_bridge_-_geograph.org.uk_-_922253.jpg", // สะพาน Bridego สถานที่จริงที่ขนเงินลง
+                sourceUrl: "https://en.wikipedia.org/wiki/Great_Train_Robbery_(1963)"
             },
             {
                 date: "เมษายน 2015",
                 location: "ลอนดอน, สหราชอาณาจักร",
                 title: "Hatton Garden Safe Deposit Burglary",
-                description: "กลุ่มชายสูงอายุวัยเกษียณ อาศัยช่วงวันหยุดยาวเทศกาลอีสเตอร์ ใช้สว่านเจาะเพชรอุตสาหกรรม เจาะทะลุกำแพงคอนกรีตหนา 50 ซม. เข้าไปยังห้องนิรภัยใต้ดิน และกวาดทรัพย์สินในตู้เซฟไปถึง 73 ตู้",
-                estimatedValue: "มูลค่าความเสียหาย: ~14 ล้านปอนด์"
+                shortDesc: "กลุ่มโจรวัยเกษียณใช้สว่านเพชรเจาะกำแพงคอนกรีตหนาครึ่งเมตร เข้าไปกวาดทรัพย์สินในตู้นิรภัยใจกลางลอนดอน",
+                fullDesc: "สิ่งที่ทำให้คดีนี้โด่งดังคือ โปรไฟล์ของคนร้าย สื่ออังกฤษเรียกพวกเขาว่า 'The Diamond Wheezers' เพราะสมาชิกในแก๊งส่วนใหญ่เป็นชายสูงอายุวัยเกษียณที่มีอายุระหว่าง 60-70 กว่าปี (อายุมากที่สุดคือ 76 ปี) <br><br>พวกเขาอาศัยช่วงวันหยุดยาวเทศกาลอีสเตอร์ที่ไม่มีใครอยู่ โรยตัวลงทางช่องลิฟต์ และใช้สว่านหัวเพชรเจาะกำแพงคอนกรีตเสริมเหล็กหนา 50 ซม. เพื่อทะลุเข้าไปในห้องนิรภัยใต้ดิน แม้สัญญาณกันขโมยจะดังขึ้น แต่ตำรวจที่รับแจ้งเหตุกลับคิดว่าเป็นสัญญาณเตือนภัยผิดพลาด ทำให้พวกเขาทำงานได้อย่างสบายใจตลอดสุดสัปดาห์",
+                estimatedValue: "ความเสียหาย: ~14-20 ล้านปอนด์",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Hatton_Garden%2C_London_%283454346845%29.jpg/800px-Hatton_Garden%2C_London_%283454346845%29.jpg", // ย่าน Hatton Garden ลอนดอน
+                sourceUrl: "https://en.wikipedia.org/wiki/Hatton_Garden_safe_deposit_burglary"
             }
         ];
 
-        // 2. ฟังก์ชันสำหรับสร้าง UI และนำข้อมูลไปแสดงผล
+        // 2. เรนเดอร์รายการหน้าแรก
         function renderHeists() {
             const container = document.getElementById('heist-list');
             
-            realHeists.forEach(heist => {
-                // สร้างกล่อง div สำหรับแต่ละเหตุการณ์
+            realHeists.forEach((heist, index) => {
                 const card = document.createElement('div');
                 card.className = 'event-card';
                 
-                // ใส่เนื้อหา HTML เข้าไปในกล่อง
                 card.innerHTML = `
-                    <div class="date"><span style="color:#fff;">📅</span> ${heist.date} | 📍 ${heist.location}</div>
-                    <h2 class="title">${heist.title}</h2>
-                    <p class="description">${heist.description}</p>
-                    <div class="value">💰 ${heist.estimatedValue}</div>
+                    <div class="card-img-container">
+                        <img src="${heist.image}" alt="${heist.title}" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <div class="date">📅 ${heist.date} | 📍 ${heist.location}</div>
+                        <h2 class="title">${heist.title}</h2>
+                        <p class="short-desc">${heist.shortDesc}</p>
+                        <button class="btn" onclick="openModal(${index})">🔍 เปิดแฟ้มคดีเพื่อดูรายละเอียด</button>
+                    </div>
                 `;
                 
-                // นำกล่องไปต่อท้ายใน container หลัก
                 container.appendChild(card);
             });
         }
 
-        // 3. สั่งให้ฟังก์ชันทำงานเมื่อโหลดหน้าเว็บเสร็จ
+        // 3. ฟังก์ชันเปิด Modal นำข้อมูลแบบละเอียดมาแสดง
+        function openModal(index) {
+            const data = realHeists[index];
+            document.getElementById('modalImg').src = data.image;
+            document.getElementById('modalDate').innerHTML = `📅 ${data.date} | 📍 ${data.location}`;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalValue').innerText = `💰 ${data.estimatedValue}`;
+            document.getElementById('modalFullDesc').innerHTML = data.fullDesc;
+            document.getElementById('modalSource').href = data.sourceUrl;
+            
+            document.getElementById('caseModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // ป้องกันไม่ให้หน้าหลักเลื่อนขณะเปิด Modal
+        }
+
+        // 4. ฟังก์ชันปิด Modal
+        function closeModal() {
+            document.getElementById('caseModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // คืนค่าให้หน้าหลักเลื่อนได้
+        }
+
+        // 5. ปิด Modal เมื่อคลิกพื้นที่ว่างข้างนอกกล่อง
+        window.onclick = function(event) {
+            const modal = document.getElementById('caseModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // เริ่มต้นทำงาน
         window.onload = renderHeists;
     </script>
 
