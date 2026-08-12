@@ -1,2 +1,136 @@
-ภูมิพัฒน์ สีสุด 66011211046
-IT 66
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกเหตุการณ์โจรกรรมระดับโลก</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #1e1e2f; 
+            color: #fff;
+            padding: 30px 15px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #f39c12; 
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        .event-card { 
+            background: #2a2a40; 
+            padding: 25px; 
+            margin-bottom: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            border-left: 6px solid #e74c3c; 
+            transition: transform 0.2s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .date { 
+            color: #e74c3c; 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            letter-spacing: 1px;
+        }
+        .title { 
+            font-size: 1.5em; 
+            margin: 12px 0; 
+            color: #f1f1f1; 
+        }
+        .description { 
+            color: #b0b0c0; 
+            line-height: 1.7; 
+            margin-bottom: 15px;
+        }
+        .value { 
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold; 
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚨 แฟ้มคดี: เหตุการณ์โจรกรรมครั้งใหญ่ของโลก</h1>
+        <!-- พื้นที่สำหรับแสดงข้อมูลจาก JavaScript -->
+        <div id="heist-list"></div>
+    </div>
+
+    <script>
+        // 1. ข้อมูลเหตุการณ์จริง (สามารถเพิ่มข้อมูลใหม่ลงใน Array นี้ได้เลย)
+        const realHeists = [
+            {
+                date: "18 มีนาคม 1990",
+                location: "บอสตัน, สหรัฐอเมริกา",
+                title: "การปล้นพิพิธภัณฑ์ Isabella Stewart Gardner",
+                description: "ชายสองคนปลอมตัวเป็นตำรวจบอสตัน เข้าไปในพิพิธภัณฑ์กลางดึก พวกเขาจับยามมัดไว้และขโมยงานศิลปะระดับมาสเตอร์พีซไป 13 ชิ้น รวมถึงผลงานของ Rembrandt และ Vermeer จนถึงปัจจุบันยังตามงานศิลปะคืนไม่ได้และยังจับใครไม่ได้",
+                estimatedValue: "มูลค่าความเสียหาย: ~500 ล้านดอลลาร์สหรัฐ"
+            },
+            {
+                date: "15-16 กุมภาพันธ์ 2003",
+                location: "แอนต์เวิร์ป, เบลเยียม",
+                title: "Antwerp Diamond Heist (การปล้นเพชรที่แอนต์เวิร์ป)",
+                description: "กลุ่มโจรชาวอิตาลีที่รู้จักกันในชื่อ 'The School of Turin' เจาะผ่านระบบรักษาความปลอดภัย 10 ชั้นที่ศูนย์เพชรแอนต์เวิร์ป พวกเขาใช้เวลาวางแผนถึง 3 ปีเพื่อขโมยเพชร ทองคำ และเครื่องประดับจากตู้นิรภัย 123 ตู้",
+                estimatedValue: "มูลค่าความเสียหาย: ~100 ล้านดอลลาร์สหรัฐ"
+            },
+            {
+                date: "8 สิงหาคม 1963",
+                location: "บักกิงแฮมเชอร์, สหราชอาณาจักร",
+                title: "The Great Train Robbery (การปล้นรถไฟครั้งใหญ่)",
+                description: "แก๊งโจร 15 คน ทำการปรับเปลี่ยนสัญญาณไฟเพื่อหยุดรถไฟไปรษณีย์ของ Royal Mail ที่เดินทางจากกลาสโกว์ไปยังลอนดอน พวกเขาขโมยถุงเงินไปได้ 120 ถุงโดยไม่ต้องใช้ปืนยิงแม้แต่นัดเดียว",
+                estimatedValue: "มูลค่าความเสียหาย: 2.6 ล้านปอนด์ (ราว 58 ล้านปอนด์ในปัจจุบัน)"
+            },
+            {
+                date: "เมษายน 2015",
+                location: "ลอนดอน, สหราชอาณาจักร",
+                title: "Hatton Garden Safe Deposit Burglary",
+                description: "กลุ่มชายสูงอายุวัยเกษียณ อาศัยช่วงวันหยุดยาวเทศกาลอีสเตอร์ ใช้สว่านเจาะเพชรอุตสาหกรรม เจาะทะลุกำแพงคอนกรีตหนา 50 ซม. เข้าไปยังห้องนิรภัยใต้ดิน และกวาดทรัพย์สินในตู้เซฟไปถึง 73 ตู้",
+                estimatedValue: "มูลค่าความเสียหาย: ~14 ล้านปอนด์"
+            }
+        ];
+
+        // 2. ฟังก์ชันสำหรับสร้าง UI และนำข้อมูลไปแสดงผล
+        function renderHeists() {
+            const container = document.getElementById('heist-list');
+            
+            realHeists.forEach(heist => {
+                // สร้างกล่อง div สำหรับแต่ละเหตุการณ์
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                
+                // ใส่เนื้อหา HTML เข้าไปในกล่อง
+                card.innerHTML = `
+                    <div class="date"><span style="color:#fff;">📅</span> ${heist.date} | 📍 ${heist.location}</div>
+                    <h2 class="title">${heist.title}</h2>
+                    <p class="description">${heist.description}</p>
+                    <div class="value">💰 ${heist.estimatedValue}</div>
+                `;
+                
+                // นำกล่องไปต่อท้ายใน container หลัก
+                container.appendChild(card);
+            });
+        }
+
+        // 3. สั่งให้ฟังก์ชันทำงานเมื่อโหลดหน้าเว็บเสร็จ
+        window.onload = renderHeists;
+    </script>
+
+</body>
+</html>
