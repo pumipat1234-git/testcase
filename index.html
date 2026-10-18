@@ -1,221 +1,2108 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกเหตุการณ์โจรกรรมระดับโลก</title>
-    <style>
-        /* สไตล์พื้นฐาน */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #121212; 
-            color: #e0e0e0;
-            padding: 30px 15px; 
-        }
-        .container { max-width: 900px; margin: auto; }
-        h1 { 
-            text-align: center; color: #f39c12; margin-bottom: 30px; font-size: 2.2em;
-            text-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
-        }
-
-        /* กล่องการ์ดเหตุการณ์ */
-        .event-card { 
-            background: #1e1e1e; 
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 25px; 
-            border-radius: 10px; 
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
-            border-left: 6px solid #e74c3c; 
-            transition: transform 0.3s ease;
-        }
-        @media (min-width: 600px) {
-            .event-card { flex-direction: row; }
-        }
-        .event-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(231, 76, 60, 0.2); }
-        .card-img-container {
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-        }
-        @media (min-width: 600px) {
-            .card-img-container { width: 300px; height: auto; }
-        }
-        .card-img { width: 100%; height: 100%; object-fit: cover; }
-        .card-content { padding: 25px; flex: 1; display: flex; flex-direction: column; }
-        
-        .date { color: #e74c3c; font-weight: bold; font-size: 1em; letter-spacing: 1px; margin-bottom: 10px; }
-        .title { font-size: 1.5em; margin: 0 0 15px 0; color: #ffffff; }
-        .short-desc { color: #aaaaaa; line-height: 1.6; margin-bottom: 20px; flex: 1; }
-        
-        /* ปุ่ม */
-        .btn {
-            background-color: #e74c3c; color: white; border: none; padding: 10px 20px;
-            border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;
-            transition: background 0.3s; width: max-content;
-        }
-        .btn:hover { background-color: #c0392b; }
-
-        /* สไตล์สำหรับ Modal (หน้าต่าง Popup) */
-        .modal {
-            display: none; /* ซ่อนไว้เป็นค่าเริ่มต้น */
-            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .modal-content {
-            background-color: #1e1e1e; padding: 0; border-radius: 10px;
-            max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto;
-            position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.5);
-        }
-        .close-btn {
-            position: absolute; top: 15px; right: 20px; color: #fff;
-            font-size: 30px; font-weight: bold; cursor: pointer; z-index: 10;
-            background: rgba(0,0,0,0.5); width: 40px; height: 40px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        }
-        .close-btn:hover { background: #e74c3c; }
-        
-        .modal-img { width: 100%; max-height: 350px; object-fit: cover; border-bottom: 2px solid #333; }
-        .modal-body { padding: 30px; }
-        .modal-title { font-size: 1.8em; color: #f39c12; margin-bottom: 10px; }
-        .modal-value { 
-            display: inline-block; background-color: #27ae60; color: white;
-            padding: 5px 12px; border-radius: 5px; font-weight: bold; font-size: 0.9em; margin-bottom: 20px;
-        }
-        .modal-full-desc { color: #cccccc; line-height: 1.8; margin-bottom: 25px; }
-        .source-link {
-            color: #3498db; text-decoration: none; font-weight: bold;
-            display: inline-flex; align-items: center; gap: 5px;
-        }
-        .source-link:hover { text-decoration: underline; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OUTBREAK – Zombie Survival Base Defense</title>
+<meta name="application-name" content="OUTBREAK"><meta name="apple-mobile-web-app-title" content="OUTBREAK"><meta name="description" content="OUTBREAK – pixel-art zombie survival and base defense">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#090d18;--pan:#111a2f;--pan2:#0b1223;--bd:#2c4272;--gold:#ffc83d;--mut:#8fa3c4}
+body{margin:0;background:var(--bg);color:#e8ecf2;font-family:'Sarabun','Noto Sans Thai','Leelawadee UI',Tahoma,system-ui,sans-serif}
+#app{max-width:1120px;margin:0 auto;padding:8px}
+.hp,.grp,.panel{background:var(--pan);border:2px solid var(--bd);border-radius:6px;box-shadow:inset 0 0 0 2px #0a1020,0 3px 0 #04060d}
+.hp h4,.grp h4{margin:0 0 5px;font-size:12px;letter-spacing:.5px;color:#7fa0e0}
+#topbar{display:grid;grid-template-columns:5fr 7fr;gap:8px;margin-bottom:8px}
+.hp{padding:6px 8px}
+.hrow{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--pan2);border:2px solid #22345c;border-radius:4px;padding:4px 8px;font-size:14px;display:flex;align-items:center;gap:6px}
+.chip b{color:var(--gold);font-size:17px}
+.chip.gold{border-color:#7a5a12}
+.chip small{color:#7fe09a;font-size:13px}
+#uTimer{color:#ffb347}
+.bar{position:relative;width:140px;height:18px;background:#05070d;border:2px solid #000;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:#d94b4b;transition:width .1s}
+.bar.base{width:170px}.bar.base i{background:#e0a030}
+.bar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 7px,rgba(0,0,0,.28) 7px 8px);pointer-events:none}
+.bar span{position:absolute;inset:0;text-align:center;font-size:11px;line-height:14px;text-shadow:0 0 3px #000,1px 1px 0 #000;z-index:1}
+#stage{position:relative;border-radius:6px}
+#stage.hit{box-shadow:0 0 0 3px #ff3b30,0 0 24px rgba(255,59,48,.6)}
+canvas{display:block;width:100%;height:auto;background:#000;border-radius:5px;image-rendering:pixelated}
+#game{border:3px solid var(--bd)}
+#controls{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-top:8px}
+.grp{padding:6px 8px 8px}.g-eco{grid-column:span 4}.g-build{grid-column:span 8}.g-sys{grid-column:span 12}
+.gb{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px}
+button{font-family:inherit;color:#fff;background:#3a5fb0;border:2px solid #0a1022;border-radius:4px;padding:8px 6px;min-height:46px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-shadow:0 1px 0 rgba(0,0,0,.6);transition:transform .06s,filter .1s;box-shadow:inset 0 2px 0 rgba(255,255,255,.28),inset 0 -4px 0 rgba(0,0,0,.32),0 3px 0 #05070d}
+button b{font-size:14px}
+button small{font-size:12px;color:#ffe08a}
+button:hover:not(:disabled){filter:brightness(1.18);transform:translateY(-1px)}
+button:active:not(:disabled){transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(0,0,0,.3)}
+button:disabled{background:#2a3042;color:#7c8494;cursor:not-allowed;box-shadow:inset 0 2px 0 rgba(255,255,255,.06),inset 0 -4px 0 rgba(0,0,0,.3),0 3px 0 #05070d}
+button:disabled small{color:#ff8a7a}
+button.gray{background:#3a4968}
+button.green{background:#2f9a54}button.orange{background:#d0762f}button.red{background:#c2403a}
+button.on{outline:3px solid var(--gold)}
+button.bought{animation:buy .45s}
+@keyframes buy{0%{box-shadow:0 0 0 0 rgba(120,255,160,.95)}100%{box-shadow:0 0 0 14px rgba(120,255,160,0)}}
+#btnVill b::before{content:'👨‍🌾 '}#btnPolice b::before{content:'👮 '}#btnBar b::before{content:'🧱 '}#btnRepair b::before{content:'🔧 '}#btnRepairBase b::before{content:'🏠 '}
+#mPlay b::before{content:'▶ '}#mShop b::before{content:'🛒 '}#mUp b::before{content:'⬆ '}#mHow b::before{content:'❓ '}#mSet b::before{content:'⚙ '}
+.hidden{display:none!important}
+.modal{position:absolute;inset:0;background:rgba(5,7,14,.86);overflow:auto;border-radius:6px;z-index:5}
+.fixedModal{position:fixed;inset:0;background:rgba(5,7,14,.9);overflow:auto;z-index:30}
+.panel{max-width:760px;margin:14px auto;padding:14px}
+.panel h2{margin:0 0 8px;font-size:20px;color:var(--gold)}
+.panel h3{margin:14px 0 6px;font-size:15px;color:#9fb8e0;border-bottom:2px solid #22345c;padding-bottom:3px}
+.row{display:flex;align-items:center;gap:10px;background:var(--pan2);border:2px solid #22345c;border-radius:4px;padding:8px;margin-bottom:6px;border-left:6px solid #888}
+.row .info{flex:1;font-size:13px;line-height:1.5}.row .info b{font-size:15px}
+.row button{min-width:150px}
+.row select{background:#080d1a;color:#fff;border:2px solid #2c4272;border-radius:4px;padding:5px;font-family:inherit;max-width:230px}
+.close{position:sticky;float:right;top:0;min-width:40px;padding:4px 10px;flex-direction:row}
+#overlay{position:absolute;inset:0;background:rgba(3,4,10,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:9;border-radius:6px;text-align:center}
+#overlay h2{font-size:42px;margin:0;color:#ff5a4d;text-shadow:3px 3px 0 #2a0a08}
+#overlay h2.win{color:#6fe08a;text-shadow:3px 3px 0 #0b3018}
+#overlay button{min-width:220px;font-size:18px}
+#menuWrap{position:relative;min-height:94vh;display:flex;align-items:center;justify-content:center;overflow:hidden;border:3px solid var(--bd);border-radius:6px}
+#menuCv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border-radius:0}
+.menuPage{position:relative;z-index:1;width:100%;max-width:760px;text-align:center;padding:20px}
+.menuPage h1{font-family:Impact,'Arial Black',sans-serif;font-size:clamp(46px,12vw,110px);margin:0;color:#ffb020;letter-spacing:6px;text-shadow:4px 4px 0 #9a2d12,8px 8px 0 #160806,0 0 40px rgba(255,120,30,.45)}
+.menuPage .sub{color:#e3ecff;margin:8px 0 26px;font-size:18px;text-shadow:0 2px 0 #000,0 0 10px #000}
+.menuBtns{display:flex;flex-direction:column;gap:12px;max-width:340px;margin:0 auto}
+.menuBtns button{font-size:20px;padding:12px;flex-direction:row;justify-content:center;min-height:54px}
+.menuBtns button b{font-size:20px}
+#mPlay{font-size:26px;min-height:68px;animation:pulse 1.6s infinite steps(2)}
+#mPlay b{font-size:26px}
+@keyframes pulse{50%{filter:brightness(1.18)}}
+#menuStages{background:rgba(9,13,24,.9);border:2px solid var(--bd);border-radius:6px;margin:16px}
+#stageGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+#stageGrid button{padding:12px 4px;font-size:22px}
+#stageGrid button small{color:#ffe08a;letter-spacing:1px}
+#stageGrid button.cleared{background:#2f9a54}
+.howto ol{padding-left:22px;line-height:1.7;font-size:15px;margin:6px 0}
+.setrow{display:flex;align-items:center;gap:12px;margin:12px 0}.setrow label{min-width:130px}.setrow input[type=range]{flex:1}
+.langbtns{display:flex;gap:8px}.langbtns button{flex-direction:row;padding:6px 16px}
+@media(max-width:760px){#topbar{grid-template-columns:1fr}.g-eco,.g-build{grid-column:span 12}#stageGrid{grid-template-columns:repeat(4,1fr)}.bar,.bar.base{width:120px}}
+.menuPage h1{position:relative;-webkit-text-stroke:2px #1a0806;paint-order:stroke fill}
+.menuPage h1::after{content:attr(data-t);position:absolute;inset:0;color:transparent;background:repeating-linear-gradient(115deg,transparent 0 17px,rgba(10,4,6,.75) 17px 19px,transparent 19px 41px),repeating-linear-gradient(80deg,transparent 0 9px,rgba(10,4,6,.5) 9px 10px,transparent 10px 23px);-webkit-background-clip:text;background-clip:text;pointer-events:none;-webkit-text-stroke:0}
+#gameLogo{font-family:Impact,'Arial Black',sans-serif;font-size:18px;letter-spacing:3px;color:#ffb020;text-shadow:2px 2px 0 #9a2d12,3px 3px 0 #160806;margin:0 0 4px 2px}
+.cardGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.ccard{background:var(--pan2);border:2px solid #22345c;border-left:6px solid var(--cc,#888);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45}
+.ccard.owned{border-color:#2f9a54;border-left-color:var(--cc,#888)}
+.ccard .hd{display:flex;gap:10px;align-items:center}
+.ccard .hd b{font-size:16px}.ccard .hd small{color:var(--mut);display:block}
+.pcv{width:72px;height:90px;flex:none;background:#0b1223;border:2px solid #22345c;border-radius:4px;image-rendering:pixelated}
+.ccard .stats{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;color:#cfe0ff;font-size:12.5px}
+.ccard .stats span b{color:var(--gold)}
+.ccard .pro{color:#7fe09a}.ccard .con{color:#ff9a8a}.ccard .use{color:#9fb8e0}
+.ccard .btns{display:flex;gap:6px;margin-top:2px}.ccard .btns button{flex:1;min-width:0}
+.ccard .why{color:#ff9a8a;font-size:12px;min-height:16px}.ccard .why.ok{color:#8fa3c4}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.slot{display:flex;gap:8px;align-items:center;background:var(--pan2);border:2px dashed #22345c;border-radius:6px;padding:6px 8px;min-height:104px;font-size:12.5px}
+.slot.full{border-style:solid;border-color:#2f9a54}.slot .em{color:var(--mut);width:100%;text-align:center}
+.slot button{min-height:32px;padding:3px 8px;margin-top:4px;font-size:12px}
+#csMsg{min-height:20px;margin:8px 0 0;font-size:14px;font-weight:bold}
+#teamStrip{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding:6px 8px}
+.tm{display:flex;gap:8px;align-items:center;background:var(--pan2);border:2px solid #22345c;border-radius:4px;padding:4px 8px;font-size:12px}
+.tm canvas{width:30px;height:38px;border:1px solid #22345c;background:#0b1223;image-rendering:pixelated}
+.tm .mini{width:92px;height:7px;background:#05070d;border:1px solid #000;margin:2px 0}.tm .mini i{display:block;height:100%;background:#4fd16f}
+.tm.dead{opacity:.5;filter:grayscale(1)}
+#overlay{overflow:auto;justify-content:safe center}
+#overText{line-height:1.5}
+.resbox{display:inline-block;text-align:left;font-size:14px;margin-top:6px;background:rgba(9,13,24,.7);border:2px solid #22345c;border-radius:6px;padding:6px 12px;min-width:290px}
+.resbox div{display:flex;justify-content:space-between;gap:16px}.resbox .tot{border-top:1px solid #22345c;margin-top:3px;padding-top:3px;color:var(--gold);font-weight:bold}
+.resbox .mut{color:var(--mut)}
+</style>
 </head>
 <body>
+<div id="app">
 
-    <div class="container">
-        <h1>🚨 แฟ้มคดี: เหตุการณ์โจรกรรมครั้งประวัติศาสตร์</h1>
-        <div id="heist-list"></div>
+  <!-- ===== หน้าเมนู ===== -->
+  <div id="menuWrap">
+    <canvas id="menuCv"></canvas>
+    <div id="menuMain" class="menuPage">
+      <h1 data-i18n="menu.title" data-t="OUTBREAK"></h1>
+      <div class="menuBtns">
+        <button id="mPlay" class="green"><b data-i18n="menu.play"></b></button>
+        <button id="mShop" class="orange"><b data-i18n="menu.shop"></b></button>
+        <button id="mUp" class="orange"><b data-i18n="menu.up"></b></button>
+        <button id="mHow" class="gray"><b data-i18n="menu.howto"></b></button>
+        <button id="mSet" class="gray"><b data-i18n="menu.settings"></b></button>
+      </div>
+      <div class="chip gold" style="display:inline-flex;margin-top:18px;background:rgba(9,13,24,.88)">🪙 <span data-i18n="cs.coins"></span> <b id="menuCoins">0</b></div>
+    </div>
+    <div id="menuStages" class="menuPage hidden">
+      <h2 data-i18n="stages.title" style="font-size:30px;margin:0"></h2>
+      <div id="stageGrid"></div>
+      <button id="mBack" class="gray" style="margin:0 auto;flex-direction:row;padding:10px 26px"><b data-i18n="back"></b></button>
+    </div>
+  </div>
+
+  <!-- ===== หน้าเกม ===== -->
+  <div id="gameWrap" class="hidden">
+    <div id="gameLogo">OUTBREAK</div>
+    <div id="topbar">
+      <div class="hp"><h4 data-i18n="grp.res"></h4><div class="hrow">
+        <div class="chip gold">💰 <span data-i18n="hud.money"></span> <b id="uMoney">0</b><small id="uIncome"></small></div>
+        <div class="chip">👨‍🌾 <span data-i18n="hud.vill"></span> <b id="uVill">0</b></div>
+        <div class="chip">👮 <span data-i18n="hud.police"></span> <b id="uPol">0</b></div>
+        <div class="chip">🎖 <span data-i18n="hud.special"></span> <b id="uSp">0</b></div>
+      </div></div>
+      <div class="hp"><h4 data-i18n="grp.battle"></h4><div class="hrow">
+        <div class="chip">🌊 <span id="uWave"></span> <small id="uTimer"></small></div>
+        <div class="chip">🧱 <span data-i18n="hud.bar"></span> Lv<span id="uBarLv"></span>
+          <div class="bar"><i id="barBar"></i><span id="barTxt"></span></div></div>
+        <div class="chip">🏠 <span data-i18n="hud.base"></span>
+          <div class="bar base"><i id="baseBar"></i><span id="baseTxt"></span></div></div>
+      </div></div>
     </div>
 
-    <!-- โครงสร้าง Modal -->
-    <div id="caseModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <img id="modalImg" class="modal-img" src="" alt="Heist Image">
-            <div class="modal-body">
-                <div id="modalDate" class="date"></div>
-                <h2 id="modalTitle" class="modal-title"></h2>
-                <div id="modalValue" class="modal-value"></div>
-                <div id="modalFullDesc" class="modal-full-desc"></div>
-                <a id="modalSource" class="source-link" href="#" target="_blank">🔗 อ่านข้อมูลอ้างอิงฉบับเต็ม</a>
-            </div>
+    <div id="stage">
+      <canvas id="game"></canvas>
+
+      <div id="shop" class="modal hidden">
+        <div class="panel">
+          <button class="close red" id="btnShopClose"><b>✕</b></button>
+          <h2 data-i18n="shop.title"></h2>
+          <h3 data-i18n="shop.guns"></h3>
+          <div id="shopGuns"></div>
+          <h3 data-i18n="shop.upg"></h3>
+          <div id="shopUpg"></div>
+          <h3 data-i18n="shop.equip"></h3>
+          <div style="margin-bottom:6px"><button class="gray" id="btnEquipBest" style="flex-direction:row"><b data-i18n="shop.auto"></b></button></div>
+          <div id="shopPolice"></div>
         </div>
+      </div>
+
+      <div id="overlay" class="hidden">
+        <h2 id="ovTitle"></h2>
+        <div id="overText" style="font-size:18px"></div>
+        <button id="btnOvA" class="green"><b></b></button>
+        <button id="btnOvB" class="gray"><b></b></button>
+      </div>
     </div>
 
-    <script>
-        // 1. ข้อมูลคดี (เพิ่ม URL รูปภาพจริงจาก Wikimedia และข้อมูลเชิงลึก)
-        const realHeists = [
-            {
-                date: "18 มีนาคม 1990",
-                location: "บอสตัน, สหรัฐอเมริกา",
-                title: "การปล้นพิพิธภัณฑ์ Isabella Stewart Gardner",
-                shortDesc: "ชายปลอมตัวเป็นตำรวจ ขโมยงานศิลปะระดับมาสเตอร์พีซไป 13 ชิ้น มูลค่ากว่า 500 ล้านดอลลาร์ และยังตามคืนไม่ได้จนถึงทุกวันนี้",
-                fullDesc: "ในช่วงเวลา 01:24 น. หลังวันเซนต์แพทริก ชายสองคนในชุดเครื่องแบบตำรวจบอสตันได้ขอเข้าไปในพิพิธภัณฑ์โดยอ้างว่ามาตรวจความเรียบร้อย ยามรักษาความปลอดภัยละเมิดกฎโดยการเปิดประตูให้ พวกเขาจับยามมัดไว้ที่ห้องใต้ดิน แล้วใช้เวลา 81 นาทีในการตัดภาพวาดออกจากกรอบอย่างใจเย็น <br><br>ภาพที่ถูกขโมยไปรวมถึงผลงานชิ้นเอกของ รอมบรันต์ (Rembrandt) อย่างภาพ 'Christ in the Storm on the Sea of Galilee' (ภาพวาดทิวทัศน์ทะเลชิ้นเดียวของเขา) และผลงานของเฟอร์เมร์ (Vermeer) ปัจจุบันทางพิพิธภัณฑ์ยังคงแขวน 'กรอบรูปเปล่า' เอาไว้ที่เดิม เพื่อรอคอยวันที่ศิลปะเหล่านี้จะกลับมา",
-                estimatedValue: "ความเสียหาย: ~500 ล้านดอลลาร์สหรัฐ",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg/800px-Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg", // ภาพวาดที่ถูกขโมยจริง
-                sourceUrl: "https://en.wikipedia.org/wiki/Isabella_Stewart_Gardner_Museum_theft"
-            },
-            {
-                date: "15-16 กุมภาพันธ์ 2003",
-                location: "แอนต์เวิร์ป, เบลเยียม",
-                title: "Antwerp Diamond Heist",
-                shortDesc: "การปล้นศูนย์กลางเพชรของโลกที่ได้รับการคุ้มกันแน่นหนาที่สุด โดยการหลบหลีกระบบความปลอดภัยถึง 10 ชั้น",
-                fullDesc: "เลโอนาร์โด โนตาร์บาร์โตโล (Leonardo Notarbartolo) หัวหน้าแก๊งชาวอิตาลี เช่าสำนักงานในตึก Antwerp Diamond Center นานถึง 3 ปีเพื่อแฝงตัวและศึกษาระบบความปลอดภัย <br><br>ในวันเกิดเหตุ พวกเขาสามารถหลบหลีกระบบตรวจจับความร้อน, เรดาร์, เซ็นเซอร์แผ่นดินไหว, สนามแม่เหล็ก, และรหัสผ่านที่เปลี่ยนตลอดเวลาได้สำเร็จ โดยไม่ต้องใช้กำลังทำลายตู้เซฟ พวกเขากวาดเพชรไปมหาศาลจนแบกไม่หมด และทิ้งบางส่วนเรี่ยราดบนพื้น โนตาร์บาร์โตโลถูกจับได้ในภายหลังเพราะเพื่อนร่วมแก๊งทิ้ง DNA ไว้บนแซนด์วิชซาลามี่ที่กินไม่หมดในถังขยะใกล้จุดเกิดเหตุ",
-                estimatedValue: "ความเสียหาย: ~100 ล้านดอลลาร์สหรัฐ",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Antwerpen_Diamantkwartier.jpg/800px-Antwerpen_Diamantkwartier.jpg", // ย่านเพชรแอนต์เวิร์ป
-                sourceUrl: "https://en.wikipedia.org/wiki/Antwerp_diamond_heist"
-            },
-            {
-                date: "8 สิงหาคม 1963",
-                location: "บักกิงแฮมเชอร์, สหราชอาณาจักร",
-                title: "The Great Train Robbery",
-                shortDesc: "การปล้นรถไฟขนเงินของรอยัลเมล์ โดยการปลอมแปลงสัญญาณไฟจราจรของรถไฟ กลายเป็นหนึ่งในการปล้นที่โด่งดังที่สุดในอังกฤษ",
-                fullDesc: "แก๊งโจร 15 คน นำโดย บรูซ เรย์โนลด์ส (Bruce Reynolds) ได้ทำการเอาถุงมือไปครอบสัญญาณไฟสีเขียว และใช้แบตเตอรี่ต่อไฟสีแดงให้สว่าง เพื่อหลอกให้รถไฟไปรษณีย์ที่กำลังเดินทางไปลอนดอนหยุดกลางดึก <br><br>เมื่อรถไฟหยุด พวกเขาบุกเข้าไปตัดตู้โดยสารที่เก็บเงินออกจากขบวน แล้วบังคับให้คนขับขับรถไฟเดินหน้าต่อไปยังสะพาน Bridego ที่มีรถบรรทุกรอรับเงินอยู่ พวกเขาขนถุงเงิน 120 ถุง น้ำหนักรวมกว่า 2.5 ตันหนีไปได้สำเร็จ แต่ถูกจับได้เกือบทั้งแก๊งในเวลาต่อมาเนื่องจากทิ้งรอยนิ้วมือไว้บนกระดานเกมเศรษฐี (Monopoly) ที่พวกเขาเล่นกันที่บ้านซ่อนตัว",
-                estimatedValue: "ความเสียหาย: 2.6 ล้านปอนด์ (ราว 58 ล้านปอนด์ในปัจจุบัน)",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Great_train_robbery_bridge_-_geograph.org.uk_-_922253.jpg/800px-Great_train_robbery_bridge_-_geograph.org.uk_-_922253.jpg", // สะพาน Bridego สถานที่จริงที่ขนเงินลง
-                sourceUrl: "https://en.wikipedia.org/wiki/Great_Train_Robbery_(1963)"
-            },
-            {
-                date: "เมษายน 2015",
-                location: "ลอนดอน, สหราชอาณาจักร",
-                title: "Hatton Garden Safe Deposit Burglary",
-                shortDesc: "กลุ่มโจรวัยเกษียณใช้สว่านเพชรเจาะกำแพงคอนกรีตหนาครึ่งเมตร เข้าไปกวาดทรัพย์สินในตู้นิรภัยใจกลางลอนดอน",
-                fullDesc: "สิ่งที่ทำให้คดีนี้โด่งดังคือ โปรไฟล์ของคนร้าย สื่ออังกฤษเรียกพวกเขาว่า 'The Diamond Wheezers' เพราะสมาชิกในแก๊งส่วนใหญ่เป็นชายสูงอายุวัยเกษียณที่มีอายุระหว่าง 60-70 กว่าปี (อายุมากที่สุดคือ 76 ปี) <br><br>พวกเขาอาศัยช่วงวันหยุดยาวเทศกาลอีสเตอร์ที่ไม่มีใครอยู่ โรยตัวลงทางช่องลิฟต์ และใช้สว่านหัวเพชรเจาะกำแพงคอนกรีตเสริมเหล็กหนา 50 ซม. เพื่อทะลุเข้าไปในห้องนิรภัยใต้ดิน แม้สัญญาณกันขโมยจะดังขึ้น แต่ตำรวจที่รับแจ้งเหตุกลับคิดว่าเป็นสัญญาณเตือนภัยผิดพลาด ทำให้พวกเขาทำงานได้อย่างสบายใจตลอดสุดสัปดาห์",
-                estimatedValue: "ความเสียหาย: ~14-20 ล้านปอนด์",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Hatton_Garden%2C_London_%283454346845%29.jpg/800px-Hatton_Garden%2C_London_%283454346845%29.jpg", // ย่าน Hatton Garden ลอนดอน
-                sourceUrl: "https://en.wikipedia.org/wiki/Hatton_Garden_safe_deposit_burglary"
+    <div id="teamStrip" class="grp hidden"></div>
+    <div id="controls">
+      <section class="grp g-eco"><h4 data-i18n="grp.eco"></h4><div class="gb"><button id="btnVill" class="green"><b></b><small></small></button><button id="btnPolice"><b></b><small></small></button></div></section>
+      <section class="grp g-build"><h4 data-i18n="grp.build"></h4><div class="gb"><button id="btnBar" class="orange"><b></b><small></small></button><button id="btnRepair" class="orange"><b></b><small></small></button><button id="btnRepairBase" class="orange"><b></b><small></small></button><button id="btnShop" class="gray"><b></b><small></small></button></div></section>
+      <section class="grp g-sys"><h4 data-i18n="grp.sys"></h4><div class="gb"><button id="btnSkip" class="gray"><b></b><small></small></button><button id="btnPause" class="gray"><b></b><small></small></button><button id="btnSpeed" class="gray"><b></b><small></small></button><button id="btnHow" class="gray"><b></b><small></small></button><button id="btnSet" class="gray"><b></b><small></small></button><button id="btnMenu" class="red"><b></b><small></small></button></div></section>
+    </div>
+  </div>
+</div>
+
+<!-- ===== หน้าต่างตั้งค่า / วิธีเล่น (ใช้ได้ทั้งในเมนูและระหว่างเล่น) ===== -->
+<div id="settingsModal" class="fixedModal hidden">
+  <div class="panel">
+    <h2 data-i18n="set.title"></h2>
+    <div class="setrow"><label data-i18n="set.sfx"></label><input type="range" id="setSfx" min="0" max="100"><span id="setSfxV" style="min-width:40px"></span></div>
+    <div class="setrow"><label data-i18n="set.music"></label><input type="range" id="setMusic" min="0" max="100"><span id="setMusicV" style="min-width:40px"></span></div>
+    <div class="setrow"><label data-i18n="set.mute"></label><input type="checkbox" id="setMute"></div>
+    <div class="setrow"><label data-i18n="set.lang"></label>
+      <div class="langbtns"><button id="langTh" class="gray"><b>ไทย</b></button><button id="langEn" class="gray"><b>English</b></button></div></div>
+    <button id="setClose" class="green" style="margin:14px auto 0;padding:10px 30px;flex-direction:row"><b data-i18n="close"></b></button>
+  </div>
+</div>
+<div id="howtoModal" class="fixedModal hidden">
+  <div class="panel howto">
+    <h2 data-i18n="how.title"></h2>
+    <div data-i18n-html="how.body"></div>
+    <label style="display:block;margin:10px 0;font-size:14px;color:#9fb0c8"><input type="checkbox" id="hwNever"> <span data-i18n="how.never"></span></label>
+    <button id="hwClose" class="green" style="margin:6px auto 0;padding:10px 30px;flex-direction:row"><b data-i18n="how.ok"></b></button>
+  </div>
+</div>
+
+<!-- ===== ร้านค้าตัวละครพิเศษ (เปิดจากหน้าเมนู) ===== -->
+<div id="charShop" class="fixedModal hidden">
+  <div class="panel" style="max-width:1000px">
+    <button class="close red" id="csClose"><b>✕</b></button>
+    <h2 data-i18n="cs.title"></h2>
+    <div id="csInfo" class="hrow"></div>
+    <div id="csMsg"></div>
+    <h3 data-i18n="cs.team"></h3>
+    <div id="csTeam" class="slots"></div>
+    <div style="color:var(--mut);font-size:12.5px;margin-top:6px" data-i18n="cs.note"></div>
+    <h3 data-i18n="cs.recruit"></h3>
+    <div id="csCards" class="cardGrid"></div>
+    <button id="csClose2" class="green" style="margin:14px auto 0;padding:10px 30px;flex-direction:row"><b data-i18n="close"></b></button>
+  </div>
+</div>
+
+<!-- ===== อัปเกรดถาวร (เปิดจากหน้าเมนู) ===== -->
+<div id="upShop" class="fixedModal hidden">
+  <div class="panel" style="max-width:900px">
+    <button class="close red" id="upClose"><b>✕</b></button>
+    <h2 data-i18n="up.title"></h2>
+    <div id="upInfo" class="hrow"></div>
+    <div style="color:var(--mut);font-size:12.5px;margin:6px 0" data-i18n="up.note"></div>
+    <div id="upMsg" style="min-height:20px;font-weight:bold;margin:4px 0"></div>
+    <h3 data-i18n="up.sec.vill"></h3><div id="upVill"></div>
+    <h3 data-i18n="up.sec.pol"></h3><div id="upPol"></div>
+    <h3 data-i18n="up.sec.sp"></h3><div id="upSp"></div>
+    <h3 data-i18n="up.sec.gun"></h3><div id="upGuns"></div>
+    <button id="upClose2" class="green" style="margin:14px auto 0;padding:10px 30px;flex-direction:row"><b data-i18n="close"></b></button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =====================================================================
+   OUTBREAK – Zombie Survival Base Defense  (HTML5 Canvas ล้วน ไฟล์เดียว)
+   ส่วนของโค้ด: 0 ยูทิลิตี้ | 1 CONFIG | 1b ภาษา | 1c ตั้งค่า/เซฟ/เสียง | 2 ASSETS | 3 STATE | 4 UPDATE | 5 RENDER | 6 UI | 7 MAIN
+   ===================================================================== */
+
+/* ========================= 0) ยูทิลิตี้ ========================= */
+const $ = id => document.getElementById(id);
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const FONT = "'Sarabun','Noto Sans Thai','Leelawadee UI',Tahoma,sans-serif";
+const fmt = n => {
+  n = Math.floor(n);
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e4) return (n / 1e3).toFixed(1) + 'K';
+  return String(n);
+};
+
+/* ========================= 1) CONFIG =========================
+   ตัวเลขบาลานซ์ทั้งหมดอยู่ที่นี่ที่เดียว (ราคา ดาเมจ เลือด ความเร็ว เวลา) */
+const CONFIG = {
+  pixelArt: true,                         // true = ภาพ sprite ไม่เบลอ
+  canvas: { width: 1100, height: 540 },
+
+  world: {
+    groundTop: 396, groundBottom: 486,
+    baseX: 85, baseY: 480, baseFront: 165,
+    barFront: 372, barLayerWidth: 14,
+    spawnX: 1150, policeRight: 292
+  },
+
+  economy: {
+    startMoney: 150,
+    startVillagers: 3,
+    incomePerVillager: 5,                 // เงิน/วินาที ต่อชาวบ้าน 1 คน
+    villagerMax: 10,                      // ชาวบ้านสูงสุด
+    villager: { baseCost: 100, growth: 1.15 },
+    police: { baseCost: 150, growth: 1.25, villagersRequired: 1, minVillagersLeft: 1, hp: 100 },
+    gunPriceGrowth: 1.15                  // ซื้อปืนระดับเดิมซ้ำ ราคา = price * growth^(จำนวนที่เคยซื้อ)
+  },
+
+  barricade: {
+    hpPerLevel: [500, 700, 1000, 1400, 2000],
+    upgradeCost: [300, 700, 1500, 3500],
+    repairCostPerHp: 0.5
+  },
+  base: { maxHp: 800, repairCostPerHp: 1 },
+
+  // ปืน: dmg=ดาเมจต่อนัด rate=นัด/วิ range=ระยะยิง(px) mag=กระสุนต่อแม็ก reload=เวลาเปลี่ยนแม็ก(วิ)
+  // ซื้อ 1 ครั้ง = 1 กระบอก ใส่ได้ตำรวจ 1 นาย
+  // len/th=ขนาดปืนที่วาด tw=ความหนาเส้นกระสุน fx=จำนวนประกายตอนยิง snd=ชุดเสียง(0-3) pellets=จำนวนเม็ด(ลูกซอง) splash=ระเบิดวง(RPG)
+  guns: [
+    { id: 'normal',  rarity: 'NORMAL',    dmg: 12, rate: 1.5, price: 80,   range: 240, mag: 12, reload: 1.6, color: '#9aa0a6', len: 10, th: 5, tw: 1.5, fx: 3,  snd: 0 },
+    { id: 'uzi',     rarity: 'NORMAL',    dmg: 4,  rate: 8,   price: 250,  range: 250, mag: 32, reload: 1.7, color: '#5fd0c8', len: 13, th: 5, tw: 1.5, fx: 3,  snd: 1 },
+    { id: 'shotgun', rarity: 'RARE',      dmg: 9,  rate: 1.1, price: 450,  range: 200, mag: 6,  reload: 2.2, color: '#e0763a', len: 20, th: 6, tw: 1.5, fx: 5,  snd: 2, pellets: 6 },
+    { id: 'rare',    rarity: 'RARE',      dmg: 7,  rate: 7,   price: 500,  range: 340, mag: 30, reload: 2.0, color: '#3fa7ff', len: 14, th: 5, tw: 2,   fx: 3,  snd: 1 },
+    { id: 'sniper',  rarity: 'EPIC',      dmg: 90, rate: .6,  price: 900,  range: 760, mag: 5,  reload: 2.6, color: '#7fd05a', len: 30, th: 4, tw: 2.5, fx: 6,  snd: 3 },
+    { id: 'epic',    rarity: 'EPIC',      dmg: 35, rate: 2.2, price: 1000, range: 460, mag: 24, reload: 2.4, color: '#b45cff', len: 20, th: 5, tw: 2,   fx: 6,  snd: 2, special: 'pierce' },
+    { id: 'rpg',     rarity: 'LEGENDARY', dmg: 80, rate: .5,  price: 2500, range: 480, mag: 3,  reload: 3.2, color: '#ff5a4d', len: 28, th: 8, tw: 4,   fx: 10, snd: 3, splash: { radius: 95, ratio: .6 } },
+    { id: 'legend',  rarity: 'LEGENDARY', dmg: 40, rate: 4,   price: 5000, range: 600, mag: 50, reload: 3.5, color: '#ffb020', len: 26, th: 8, tw: 3,   fx: 6,  snd: 3, special: 'explode' }
+  ],
+  upgrades: {
+    pierce:  { price: 1500, count: 3, laneTol: 40, falloff: 0.8, needGun: 5 },
+    explode: { price: 4000, radius: 90, splash: 0.5, needGun: 7 }
+  },
+
+  // ตัวละครพิเศษ: ซื้อด้วยเหรียญสะสม 🪙 ที่ร้านค้าหน้าเมนู แล้วส่งเข้าทีม (ช่องทีมจำกัด) – บาลานซ์ทั้งหมดแก้ที่นี่
+  // atk: dmg=ดาเมจ/ครั้ง interval=วินาทีต่อครั้ง range=ระยะ(px) mag/reload=แม็ก/เวลาเปลี่ยนแม็ก
+  specials: {
+    slots: 3,
+    fighter:   { type: 'melee',   icon: '🗡️', color: '#e0762f', cost: 150, hp: 170, speed: 90, w: 34, h: 58, homeX: 336,
+                 atk: { dmg: 28, interval: .8, range: 46 } },
+    rifleman:  { type: 'ranged',  icon: '🔫', color: '#8fcf5a', cost: 220, hp: 100, speed: 55, w: 34, h: 58, homeX: 262,
+                 atk: { dmg: 14, interval: .42, range: 400, mag: 20, reload: 2.0 } },
+    sniper:    { type: 'sniper',  icon: '🔭', color: '#7fd0ff', cost: 600, hp: 60,  speed: 50, w: 34, h: 58, homeX: 236,
+                 atk: { dmg: 70, interval: 1.8, range: 700, mag: 5, reload: 2.5 } },
+    medic:     { type: 'support', icon: '🩺', color: '#ff6a7a', cost: 350, hp: 120, speed: 70, w: 34, h: 58, homeX: 210,
+                 atk: { dmg: 8, interval: 1, range: 220, mag: 12, reload: 1.6 },
+                 repair: { hp: 8, interval: 1, range: 130, costPerHp: .25, heal: 6, healBelow: .65, threat: 75 } },
+    grenadier: { type: 'lure',    icon: '💣', color: '#5ff0c0', cost: 450, hp: 90,  speed: 55, w: 34, h: 58, homeX: 236,
+                 atk: { dmg: 6, interval: 1.1, range: 260, mag: 10, reload: 2.0 },
+                 ability: { cd: 12, charges: 3, radius: 140, dur: 5, minZombies: 3, landX: 130 } },
+    heavy:     { type: 'melee',   icon: '🛡️', color: '#9fb0c8', cost: 400, hp: 420, speed: 55, w: 40, h: 62, homeX: 352, armor: .25,
+                 atk: { dmg: 18, interval: 1.3, range: 50 }, taunt: { radius: 56, chance: .6 } }
+  },
+
+  // อัปเกรดถาวร (ซื้อด้วยเหรียญ 🪙 ที่หน้าเมนู) base=ค่าเริ่มต้น values[]=ค่าหลังอัปแต่ละขั้น cost[]=ราคาของแต่ละขั้น
+  perm: {
+    villIncome: { base: 5,  values: [10, 15, 20],    cost: [150, 400, 900] },     // เงิน/วินาที ต่อชาวบ้าน 1 คน
+    villStart:  { base: 3,  values: [4, 5, 6],       cost: [120, 300, 700] },     // ชาวบ้านตอนเริ่มด่าน
+    villMax:    { base: 10, values: [12, 14, 16],    cost: [150, 350, 800] },     // ชาวบ้านสูงสุด
+    polStart:   { base: 0,  values: [1, 2, 3],       cost: [200, 500, 1100] },    // ตำรวจ (พร้อมปืนพก) ตอนเริ่มด่าน
+    polMax:     { base: 8,  values: [10, 12, 14],    cost: [150, 350, 800] },     // ตำรวจสูงสุด
+    spHp:       { base: 0,  values: [.15, .30, .45], cost: [200, 500, 1000] },    // +เลือดตัวละครพิเศษทุกคน
+    spAtk:      { base: 0,  values: [.12, .24, .36], cost: [200, 500, 1000] },    // +ดาเมจตัวละครพิเศษทุกคน
+    spSlots:    { base: 3,  values: [4, 5],          cost: [500, 1200] },         // ช่องทีมตัวละครพิเศษ
+    // สเตตัสปืน 3 ขั้นต่อกระบอก: บวกขั้นละ % จากค่าฐาน (ดาเมจ/ความเร็วยิง/ระยะ/แม็ก เพิ่ม, เวลาเปลี่ยนแม็ก ลด)
+    gun: { step: { dmg: .10, rate: .05, range: .05, reload: .07, mag: .10 }, costMul: [1, 2, 3.5], base: { pct: .25, min: 100, max: 600 } }
+  },
+
+  zombies: {
+    baseHp: 80, baseDmg: 8,
+    normal:   { key: 'zombie',   hpMul: 1,  dmgMul: 1,  speed: 95, atkInterval: 1, reward: 15 },
+    runner:   { key: 'zombie', hpMul: .6, dmgMul: .8, speed: 180, atkInterval: .8, reward: 18, scale: .9, pal: { skin: '#c9d24a', shirt: '#a8442c', pants: '#3a2a22' } },
+    armored:  { key: 'zombie', hpMul: 3, dmgMul: 1.4, speed: 65, atkInterval: 1.2, reward: 40, scale: 1.15, armor: .6, pierceAt: 30, pal: { skin: '#7fae6a', shirt: '#8a95a8', pants: '#4a5262' } },
+    exploder: { key: 'zombie', hpMul: 1.4, dmgMul: 1, speed: 85, atkInterval: 1, reward: 25, scale: 1.1, explode: true, fuse: 1.3, blast: 70, radius: 110, pal: { skin: '#e08a3a', shirt: '#b8322a', pants: '#5a2a22' } },
+    spitter:  { key: 'zombie', hpMul: 1.2, dmgMul: 1.6, speed: 60, atkInterval: 2.4, reward: 30, scale: 1, range: 230, pal: { skin: '#55c8a0', shirt: '#2e6a4a', pants: '#1f3a30' } },
+    screamer: { key: 'zombie', hpMul: 1.5, dmgMul: .6, speed: 70, atkInterval: 1.2, reward: 45, scale: 1.05, summon: { n: 3, cd: 9, max: 2 }, pal: { skin: '#c8a8e0', shirt: '#5a3a8a', pants: '#2a1f4a' } },
+    infected: { key: 'infected', hpMul: 5,  dmgMul: 5,  speed: 80, atkInterval: 1, reward: 30 },
+    boss: {
+      key: 'boss', hpMul: 50, dmgMul: 10, speed: 40, atkInterval: 2, reward: 500,
+      phase2: { hpPct: 0.4, resist: 0.2, dmgMul: 1.5, atkSpeedMul: 1.4 }
+    }
+  },
+
+  // เวฟภายใน 1 ด่าน
+  wave: {
+    firstPrep: 60, rest: 30, spawnDuration: 30,
+    wavesPerStage: 7,
+    baseCount: 8, countPerWave: 2.5,
+    hpGrowth: 0.10, dmgGrowth: 0.05,
+    bossFromStage: 11,                    // บอสเริ่มโผล่ตั้งแต่ด่านนี้
+    specialFromStage: 6,                  // ซอมบี้พิเศษ (วิ่งเร็ว/ติดเชื้อ/เกราะ ฯลฯ) เริ่มโผล่ตั้งแต่ด่านนี้
+    stageWaves: [[5, 3], [10, 5], [999, 7]],   // [ถึงด่านที่, จำนวนเวฟ]: ด่าน1-5=3 | 6-10=5 | 11+=7
+    bossEvery: 5,                         // บอสทุกกี่เวฟ (เวฟที่ 5)
+    infectedStartWave: 3,
+    tiers: [
+      { to: 2, color: '#6fe08a', infectedChance: 0 },
+      { to: 5, color: '#ffd54a', infectedChance: 0.20 },
+      { to: 7, color: '#ff6a5a', infectedChance: 0.35 }
+    ]
+  },
+
+  // 20 ด่าน: ความยากเพิ่มตามเลเวลด่าน (ค่าคูณ = 1 + ค่าต่อด่าน * (ด่าน-1))
+  stages: {
+    count: 20,
+    hpPerStage: 0.14,        // เลือดซอมบี้
+    dmgPerStage: 0.05,       // ดาเมจซอมบี้
+    countPerStage: 0.06,     // จำนวนซอมบี้
+    speedPerStage: 0.015,    // ความเร็วซอมบี้
+    rewardPerStage: 0.25,    // เงินรางวัลต่อตัว
+    infectedPerStage: 0.01,  // โอกาสติดเชื้อที่เพิ่ม
+    startMoneyPerStage: 150, // เงินเริ่มต้นเพิ่มต่อด่าน
+    finalBossEvery: 5        // ด่านที่หาร 5 ลงตัว มีบอสที่เวฟสุดท้ายเพิ่มอีกตัว
+  }
+};
+const SPECIAL_IDS = ['fighter', 'rifleman', 'sniper', 'medic', 'grenadier', 'heavy'];
+const PERM_KEYS = ['villIncome', 'villStart', 'villMax', 'polStart', 'polMax', 'spHp', 'spAtk', 'spSlots'];
+const permLvl = k => (Save.up && Save.up[k]) || 0;
+const permVal = k => { const P = CONFIG.perm[k], l = permLvl(k); return l > 0 ? P.values[l - 1] : P.base; };
+const gunLvl = id => (Save.up && Save.up.gun && Save.up.gun[id]) || 0;
+const teamSlots = () => permVal('spSlots');
+const waveCount = st => CONFIG.wave.stageWaves.find(([to]) => st <= to)[1];
+const gunUpCost = (g, l) => { const B = CONFIG.perm.gun.base; return Math.round(clamp(g.price * B.pct, B.min, B.max) * CONFIG.perm.gun.costMul[l] / 10) * 10; };
+function gunAt(g, l) {                          // สเตตัสปืนที่อัปเกรดถาวรถึงขั้น l
+  const U = CONFIG.perm.gun.step;
+  return Object.assign({}, g, { dmg: +(g.dmg * (1 + U.dmg * l)).toFixed(2), rate: +(g.rate * (1 + U.rate * l)).toFixed(2), range: Math.round(g.range * (1 + U.range * l)),
+    reload: +(g.reload * (1 - U.reload * l)).toFixed(2), mag: Math.round(g.mag * (1 + U.mag * l)), lvl: l });
+}
+const buildGunCfg = () => CONFIG.guns.map(g => gunAt(g, gunLvl(g.id)));
+const stageParams = n => {
+  const S0 = CONFIG.stages, k = n - 1;
+  return { hp: 1 + S0.hpPerStage * k, dmg: 1 + S0.dmgPerStage * k, count: 1 + S0.countPerStage * k,
+           speed: 1 + S0.speedPerStage * k, reward: 1 + S0.rewardPerStage * k, infected: S0.infectedPerStage * k };
+};
+
+/* ========================= 1b) ภาษา (i18n) =========================
+   เพิ่มภาษาใหม่: เพิ่ม object ใน LANG แล้วเพิ่มปุ่มใน HTML (id langXx) */
+const LANG = {
+  th: {
+    'menu.title': 'OUTBREAK', 'grp.res': 'ทรัพยากร', 'grp.battle': 'สถานะการรบ', 'grp.eco': 'เศรษฐกิจ & กำลังพล', 'grp.build': 'ป้อมปราการ & ร้านค้า', 'grp.sys': 'ระบบเกม', 'res.line': 'เวฟที่รอด {w} • สูญเสียตำรวจ {l} • รางวัลรอบนี้ +{r} 🪙 • สะสมทั้งหมด {c} 🪙', 'ban.lost': '💀 ตำรวจเสียชีวิต!', 'menu.play': 'เริ่มเล่น', 'menu.howto': 'วิธีเล่น', 'menu.settings': 'ตั้งค่า',
+    'stages.title': 'เลือกด่าน', 'back': '← กลับ', 'stage': 'ด่าน {n}',
+    'set.title': 'ตั้งค่า', 'set.sfx': 'เสียงเอฟเฟกต์', 'set.music': 'เสียงเพลง', 'set.mute': 'ปิดเสียงทั้งหมด', 'set.lang': 'ภาษา', 'close': 'ปิด',
+    'how.title': 'วิธีเล่น', 'how.never': 'ไม่ต้องแสดงอีกตอนเริ่มด่าน 1', 'how.ok': 'เข้าใจแล้ว',
+    'how.body': '<ol><li>เป้าหมาย: ป้องกัน <b>ฐาน</b> ให้รอดครบ <b>ทุกเวฟ</b> (ด่าน 1–5 มี 3 เวฟ • ด่าน 6–10 มี 5 เวฟ • ด่าน 11 ขึ้นไป 7 เวฟ) เพื่อผ่านด่าน (มี 20 ด่าน ยากขึ้นเรื่อยๆ)</li>' +
+      '<li>👨‍🌾 <b>ชาวบ้าน</b> สร้างเงิน 5 ต่อวินาทีต่อคน (มีได้สูงสุด 10 คน)</li>' +
+      '<li>👮 กด <b>แปลงเป็นตำรวจ</b> ใช้ชาวบ้าน 1 คน + เงิน ตำรวจต้องมีปืนถึงจะยิงได้</li>' +
+      '<li>🔫 <b>ร้านปืน</b>: ซื้อ 1 ครั้งได้ปืน 1 กระบอก ใส่ได้ 1 นาย มี 8 ชนิด (ปืนพก อูซี่ ลูกซอง SMG สไนเปอร์ M4 RPG มินิกัน) ปืนแต่ละระดับมีดาเมจ ระยะยิง และจำนวนกระสุนต่อแม็กไม่เท่ากัน กระสุนหมดต้องรอเปลี่ยนแม็ก</li>' +
+      '<li>🧱 <b>บาริเคท</b> ซอมบี้จะหยุดตีก่อน อัปเกรดให้หนาขึ้นและกดซ่อมเมื่อเลือดลด ถ้าพังหมดซอมบี้จะไปตีฐาน</li>' +
+      '<li>🧟 ด่าน 1–5 มีแต่ซอมบี้ธรรมดา ไม่มีบอส ซอมบี้พิเศษรวมถึงซอมบี้ติดเชื้อ (เลือด/ดาเมจ 5 เท่า เวฟ 3+) เริ่มโผล่ตั้งแต่ด่าน 6 และบอสโผล่ตั้งแต่ด่าน 11 และเมื่อเลือดต่ำกว่า 40% จะคลั่ง ต้านดาเมจ</li>' +
+      '<li>⏱ มีเวลาเตรียมตัว 60 วินาทีก่อนเวฟแรก และพัก 30 วินาทีระหว่างเวฟ เวฟเริ่มเอง</li></ol>',
+    'hud.money': 'เงิน', 'hud.vill': 'ชาวบ้าน', 'hud.police': 'ตำรวจ', 'hud.bar': 'บาริเคท', 'hud.base': 'ฐาน',
+    'hud.left': 'ซอมบี้เหลือ {n}', 'hud.rest': 'พัก {n} วิ', 'hud.next': 'เวฟถัดไปใน {n} วิ', 'hud.wave': 'ด่าน {s} • เวฟ {w}/{m}', 'persec': '/วิ',
+    'tier0': 'ง่าย', 'tier1': 'ปานกลาง', 'tier2': 'ยาก',
+    'b.vill': 'ซื้อชาวบ้าน', 'b.vill.sub': '฿{c} • +{i}/วิ', 'b.vill.max': 'ครบ {n} คนแล้ว',
+    'b.police': 'แปลงเป็นตำรวจ', 'b.police.sub': '{v} ชาวบ้าน + ฿{c}',
+    'b.bar': 'อัปเกรดบาริเคท', 'b.bar.max': 'เลเวลสูงสุด', 'b.repair': 'ซ่อมบาริเคท', 'b.repairBase': 'ซ่อมฐาน', 'b.full': 'เต็มแล้ว',
+    'b.shop': '🔫 ร้านปืน', 'b.shop.sub': 'ซื้อปืน • อัปเกรด • จัดปืน',
+    'b.skip': '⏭ เริ่มเวฟทันที', 'b.skip.sub1': 'ข้ามเวลาพัก', 'b.skip.sub2': 'กำลังสู้',
+    'b.pause': '⏸ พักเกม', 'b.resume': '▶ เล่นต่อ', 'b.speed': '⏩ ความเร็ว x{n}', 'b.speed.sub': 'กดเพื่อสลับ',
+    'b.howto': '❓ วิธีเล่น', 'b.settings': '⚙ ตั้งค่า', 'b.menu': '🏠 ออกเมนู',
+    'shop.title': '🔫 ร้านปืน', 'shop.guns': 'ซื้อปืน (1 ครั้ง = 1 กระบอก ใส่ได้ 1 นาย • ต้องซื้อเรียงระดับ)',
+    'shop.upg': 'อัปเกรดพิเศษ (มีผลกับปืนระดับนั้นทุกกระบอก)', 'shop.equip': 'จัดปืนให้ตำรวจ', 'shop.auto': 'จัดปืนอัตโนมัติ (แรงสุดก่อน)',
+    'shop.nopolice': 'ยังไม่มีตำรวจ – กด "แปลงเป็นตำรวจ" ก่อน',
+    'shop.stat': 'ดาเมจ {d} • {r} นัด/วิ • DPS {dps}', 'shop.stat2': 'แม็ก {m} นัด • เปลี่ยนแม็ก {rl} วิ • ระยะยิง {rg}',
+    'shop.owned': 'มีอยู่ {n} กระบอก', 'shop.buy': 'ซื้อ ฿{p}', 'shop.lock': '🔒 ซื้อ {g} ก่อน', 'shop.done': 'ซื้อแล้ว ✔', 'shop.needGun': '🔒 ต้องมี {g}',
+    'shop.none': 'ไม่มีปืน', 'shop.police': '👮 ตำรวจ #{n}',
+    'gun.normal': 'ปืนพก', 'gun.rare': 'ปืนกลมือ SMG', 'gun.epic': 'ไรเฟิล M4', 'gun.legend': 'มินิกัน',
+    'upg.pierce': 'กระสุนทะลุ (Epic)', 'upg.pierce.d': 'ทะลุศัตรูสูงสุด {c} ตัวในแนวเดียวกัน (ดาเมจลด {f}% ต่อตัว)',
+    'upg.explode': 'กระสุนระเบิดเป็นวง (Legendary)', 'upg.explode.d': 'ระเบิดรัศมี {r} px ดาเมจ {s}% ของปืน',
+    'z.boss': 'เดอะ บรูท', 'boss.label': 'บอส: ', 'boss.rage': '  🔥 คลั่ง',
+    'ban.wave': 'ด่าน {s} • เวฟ {w}/{m}', 'ban.tier': 'ระดับ{t}', 'ban.boss': '⚠ บอสมาแล้ว!',
+    'ban.enrage': 'บอสคลั่ง!', 'ban.enrage.s': 'ตีแรงขึ้น • ต้านดาเมจ {r}%', 'ban.bossdead': 'ฆ่าบอสได้แล้ว!', 'ban.bossdead.s': '+{n} เงิน',
+    'over.title': '💀 ฐานแตก!', 'over.text': 'ถึงเวฟที่ {w}/{m} • ฆ่าซอมบี้ {k} ตัว', 'over.retry': 'ลองใหม่', 'over.stages': 'เลือกด่าน',
+    'win.title': '🎉 ผ่านด่าน {n}!', 'win.text': 'ฆ่าซอมบี้ {k} ตัว', 'win.next': 'ด่านถัดไป', 'win.replay': 'เล่นซ้ำ', 'win.all': '🏆 ผ่านครบทุกด่านแล้ว!'
+  },
+  en: {
+    'menu.title': 'OUTBREAK', 'grp.res': 'Resources', 'grp.battle': 'Battle status', 'grp.eco': 'Economy & forces', 'grp.build': 'Fortress & shop', 'grp.sys': 'Game', 'res.line': 'Waves survived {w} • Officers lost {l} • Run reward +{r} 🪙 • Total {c} 🪙', 'ban.lost': '💀 Officer down!', 'menu.play': 'Play', 'menu.howto': 'How to Play', 'menu.settings': 'Settings',
+    'stages.title': 'Select Stage', 'back': '← Back', 'stage': 'Stage {n}',
+    'set.title': 'Settings', 'set.sfx': 'Sound effects', 'set.music': 'Music', 'set.mute': 'Mute all', 'set.lang': 'Language', 'close': 'Close',
+    'how.title': 'How to Play', 'how.never': 'Do not show again when starting Stage 1', 'how.ok': 'Got it',
+    'how.body': '<ol><li>Goal: keep the <b>base</b> alive through all <b>waves</b> (stages 1–5: 3 waves • 6–10: 5 waves • 11+: 7 waves) to clear the stage (20 stages, getting harder).</li>' +
+      '<li>👨‍🌾 <b>Villagers</b> earn 5 money/sec each (max 10 villagers).</li>' +
+      '<li>👮 Press <b>Make Police</b>: costs 1 villager + money. Police can only shoot if they have a gun.</li>' +
+      '<li>🔫 <b>Gun shop</b>: one purchase = one gun, equipped by one officer. Eight types: Pistol, Uzi, Shotgun, SMG, Sniper, M4, RPG, Minigun. Each tier differs in damage, range and magazine size. When the magazine is empty the officer must reload.</li>' +
+      '<li>🧱 <b>Barricade</b>: zombies stop to attack it first. Upgrade it and repair it when damaged. If it breaks, they go for the base.</li>' +
+      '<li>🧟 Stages 1–5 have only normal zombies and no boss. Special zombies, including infected ones (5x HP and damage, wave 3+), appear from stage 6; bosses from stage 11 and get enraged below 40% HP, resisting damage.</li>' +
+      '<li>⏱ You get 60 seconds to prepare before wave 1 and 30 seconds between waves. Waves start automatically.</li></ol>',
+    'hud.money': 'Money', 'hud.vill': 'Villagers', 'hud.police': 'Police', 'hud.bar': 'Barricade', 'hud.base': 'Base',
+    'hud.left': 'Zombies left {n}', 'hud.rest': 'Rest {n}s', 'hud.next': 'Next wave in {n}s', 'hud.wave': 'Stage {s} • Wave {w}/{m}', 'persec': '/s',
+    'tier0': 'Easy', 'tier1': 'Medium', 'tier2': 'Hard',
+    'b.vill': 'Buy Villager', 'b.vill.sub': '฿{c} • +{i}/s', 'b.vill.max': 'Max {n} reached',
+    'b.police': 'Make Police', 'b.police.sub': '{v} villager + ฿{c}',
+    'b.bar': 'Upgrade Barricade', 'b.bar.max': 'Max level', 'b.repair': 'Repair Barricade', 'b.repairBase': 'Repair Base', 'b.full': 'Full',
+    'b.shop': '🔫 Gun Shop', 'b.shop.sub': 'Buy • Upgrade • Equip',
+    'b.skip': '⏭ Start Wave Now', 'b.skip.sub1': 'Skip rest time', 'b.skip.sub2': 'In combat',
+    'b.pause': '⏸ Pause', 'b.resume': '▶ Resume', 'b.speed': '⏩ Speed x{n}', 'b.speed.sub': 'Click to switch',
+    'b.howto': '❓ How to Play', 'b.settings': '⚙ Settings', 'b.menu': '🏠 Menu',
+    'shop.title': '🔫 Gun Shop', 'shop.guns': 'Buy guns (1 purchase = 1 gun, 1 officer • buy tiers in order)',
+    'shop.upg': 'Special upgrades (apply to every gun of that tier)', 'shop.equip': 'Equip police', 'shop.auto': 'Auto-equip (strongest first)',
+    'shop.nopolice': 'No police yet – press "Make Police" first',
+    'shop.stat': 'Damage {d} • {r} shots/s • DPS {dps}', 'shop.stat2': 'Mag {m} rounds • reload {rl}s • range {rg}',
+    'shop.owned': 'Owned: {n}', 'shop.buy': 'Buy ฿{p}', 'shop.lock': '🔒 Buy {g} first', 'shop.done': 'Purchased ✔', 'shop.needGun': '🔒 Requires {g}',
+    'shop.none': 'No gun', 'shop.police': '👮 Officer #{n}',
+    'gun.normal': 'Pistol', 'gun.rare': 'SMG', 'gun.epic': 'M4 Rifle', 'gun.legend': 'Minigun',
+    'upg.pierce': 'Piercing rounds (Epic)', 'upg.pierce.d': 'Pierces up to {c} zombies in a line ({f}% damage loss each)',
+    'upg.explode': 'Explosive rounds (Legendary)', 'upg.explode.d': 'Explodes in {r} px radius for {s}% of gun damage',
+    'z.boss': 'The Brute', 'boss.label': 'BOSS: ', 'boss.rage': '  🔥 ENRAGED',
+    'ban.wave': 'Stage {s} • Wave {w}/{m}', 'ban.tier': '{t} difficulty', 'ban.boss': '⚠ Boss incoming!',
+    'ban.enrage': 'Boss enraged!', 'ban.enrage.s': 'Hits harder • {r}% damage resist', 'ban.bossdead': 'Boss defeated!', 'ban.bossdead.s': '+{n} money',
+    'over.title': '💀 Base destroyed!', 'over.text': 'Reached wave {w}/{m} • {k} zombies killed', 'over.retry': 'Retry', 'over.stages': 'Stage select',
+    'win.title': '🎉 Stage {n} cleared!', 'win.text': '{k} zombies killed', 'win.next': 'Next stage', 'win.replay': 'Replay', 'win.all': '🏆 All stages cleared!'
+  }
+};
+Object.assign(LANG.th, {
+  'menu.shop': 'ร้านค้า', 'cs.title': '🛒 ร้านค้าตัวละครพิเศษ', 'cs.coins': 'เหรียญสะสม', 'cs.team': 'ทีมที่ส่งเข้าสนาม', 'cs.recruit': 'รับสมัครตัวละคร',
+  'cs.slots': '👥 ช่องทีม {n}/{m}', 'cs.teamcost': '💼 มูลค่าทีม {c} 🪙', 'cs.empty': 'ช่องว่าง<br>ส่งตัวละครที่ซื้อแล้วเข้าทีม',
+  'cs.note': 'ตัวละครที่ซื้อแล้วเป็นของคุณถาวร ส่งเข้าทีมได้ตามจำนวนช่อง ถ้าตายในด่านจะหายไปเฉพาะรอบนั้น แล้วกลับมาใช้ได้ในรอบหน้า (ไม่ฟื้นฟรีระหว่างด่าน)',
+  'cs.buy': 'ซื้อ 🪙{c}', 'cs.owned': 'ซื้อแล้ว ✔', 'cs.after': 'คงเหลือหลังซื้อ {n} 🪙', 'cs.deploy': 'ส่งเข้าทีม', 'cs.remove': 'ถอดออกจากทีม',
+  'cs.why.coin': 'เหรียญไม่พอ (ขาดอีก {n} 🪙)', 'cs.why.full': 'ทีมเต็ม {n}/{m} – ถอดคนอื่นออกก่อน', 'cs.why.own': 'ต้องซื้อก่อนจึงจะส่งเข้าทีมได้', 'cs.why.owned': 'ซื้อแล้ว (ตัวละครแต่ละคลาสมีได้ 1 คน)',
+  'cs.ok.buy': 'ซื้อ {n} สำเร็จ! ส่งเข้าทีมได้แล้ว', 'cs.ok.dep': 'ส่ง {n} เข้าทีมแล้ว', 'cs.ok.rem': 'ถอด {n} ออกจากทีมแล้ว',
+  'cs.pro': 'ข้อดี', 'cs.con': 'ข้อเสีย', 'cs.use': 'วิธีใช้',
+  'sp.hp': 'เลือด', 'sp.dmg': 'ดาเมจ', 'sp.rate': 'ความเร็วโจมตี', 'sp.dps': 'DPS', 'sp.range': 'ระยะ', 'sp.move': 'ความเร็วเดิน', 'sp.melee': 'ประชิด', 'sp.persec': '/วิ',
+  'hud.special': 'พิเศษ', 'tm.dead': '💀 เสียชีวิต', 'tm.reload': '⏳ เปลี่ยนแม็ก', 'tm.repair': '🔧 กำลังซ่อม', 'tm.heal': '➕ กำลังรักษา', 'tm.ready': 'พร้อมรบ', 'tm.lure': '💣 ล่อ x{n}', 'tm.lurecd': '💣 รอ {s} วิ',
+  'ban.lostSp': '💀 {n} เสียชีวิต!',
+  'res.lost': 'สูญเสียหน่วย', 'res.base': 'ฐานเหลือ', 'res.run': 'เงินที่หาได้ในรอบ ฿{n} (ใช้ได้เฉพาะรอบนี้ ไม่นำไปสะสม)', 'res.head': 'รางวัลเหรียญ 🪙 (เก็บถาวร)',
+  'res.b.base': 'รางวัลพื้นฐาน', 'res.b.wave': 'เวฟที่รอด {n} × 15', 'res.b.clear': 'โบนัสผ่านด่าน', 'res.b.perfect': 'โบนัสไม่เสียหน่วยเลย', 'res.b.total': 'ได้ครั้งนี้', 'res.b.all': 'เหรียญสะสมทั้งหมด',
+  'res.fallen': '💀 เสียชีวิต: {n} (กลับมาใช้ได้ในรอบหน้า)', 'res.shop': 'ร้านค้า',
+  'cls.fighter': 'นักสู้ประชิด', 'cls.rifleman': 'พลปืนไรเฟิล', 'cls.sniper': 'พลซุ่มยิง', 'cls.medic': 'แพทย์สนาม', 'cls.grenadier': 'พลระเบิดล่อ', 'cls.heavy': 'ยามเกราะหนัก',
+  'role.fighter': 'ประชิด • แนวหน้า', 'role.rifleman': 'ระยะกลาง • ดาเมจสม่ำเสมอ', 'role.sniper': 'ระยะไกล • เจาะเป้าสำคัญ', 'role.medic': 'สนับสนุน • ซ่อมบำรุง', 'role.grenadier': 'ควบคุมพื้นที่', 'role.heavy': 'แทงค์ • ปกป้องเพื่อน',
+  'ab.fighter': 'ฟาดไม้ระยะประชิด (ระยะ {rg}) ต้องวิ่งเข้าหาซอมบี้เอง โจมตีของไกลไม่ได้',
+  'ab.rifleman': 'ยิงอัตโนมัติระยะกลาง แม็ก {m} นัด เปลี่ยนแม็ก {rl} วิ',
+  'ab.sniper': 'เลือกเป้าอันตรายก่อน (บอส/เกราะ/ตัวถุยพิษ/กรีดร้อง) แม็ก {m} นัด เปลี่ยนแม็ก {rl} วิ',
+  'ab.medic': 'ซ่อมบาริเคท/ฐานทีละ {hp} เลือด ทุก {iv} วิ (ระยะ {rg}) • รักษาเพื่อนที่เลือดต่ำ {h} เลือด • ค่าซ่อม ฿{c}/เลือด • หยุดซ่อมเมื่อมีซอมบี้ใกล้ตัว',
+  'ab.grenadier': 'ปาระเบิดล่อ: ซอมบี้ในรัศมี {r} เดินเข้าหาจุดตก {d} วิ • คูลดาวน์ {cd} วิ • มี {n} ลูก/รอบ',
+  'ab.heavy': 'ยั่วยุ: ซอมบี้ใกล้ตัว {p}% หันมาตีโล่ • ลดดาเมจที่ได้รับ {a}%',
+  'pro.fighter': 'เลือดมากกว่าพลยิง ดาเมจสูงในระยะประชิด', 'con.fighter': 'ถูกรุมแล้วตายไว โจมตีของไกลไม่ได้', 'use.fighter': 'วางหน้าบาริเคท ฟาดซอมบี้ที่เข้ามาติด',
+  'pro.rifleman': 'ดาเมจต่อเนื่องคงที่ คุ้มราคา', 'con.rifleman': 'เปราะบางเมื่อซอมบี้เข้าถึงตัว', 'use.rifleman': 'ตั้งแถวหลัง กำจัดฝูงซอมบี้ธรรมดา',
+  'pro.sniper': 'ดาเมจสูงมาก ระยะไกล เจาะเกราะได้ดี', 'con.sniper': 'ยิงช้า เลือดน้อย รับมือฝูงไม่ไหว', 'use.sniper': 'จัดการบรูท ซอมบี้เกราะ ตัวถุยพิษ ตัวกรีดร้อง',
+  'pro.medic': 'ยืดอายุบาริเคทและฐาน ช่วยรักษาเพื่อน', 'con.medic': 'ดาเมจต่ำ เสียเงินซ่อมเล็กน้อย ไม่ทำให้ฐานอมตะ', 'use.medic': 'อยู่หลังบาริเคท ใกล้ฐาน คอยตามซ่อม',
+  'pro.grenadier': 'ดึงฝูงออกจากบาริเคทและรวมให้ยิงง่าย', 'con.grenadier': 'ใช้ต่อเนื่องไม่ได้ ดาเมจตัวเองต่ำ ล่อบอสไม่ได้', 'use.grenadier': 'ใช้เมื่อฝูงบุก คู่กับปืนระเบิด/กระสุนทะลุ',
+  'pro.heavy': 'เลือดเยอะมาก ดึงความสนใจซอมบี้', 'con.heavy': 'เดินและตีช้า ดาเมจน้อย ตีเกราะแทบไม่เข้า', 'use.heavy': 'ยืนหน้าสุด ปกป้องเพื่อนที่เปราะบาง'
+});
+Object.assign(LANG.en, {
+  'menu.shop': 'Shop', 'cs.title': '🛒 Special Character Shop', 'cs.coins': 'Coins', 'cs.team': 'Deployed team', 'cs.recruit': 'Recruit characters',
+  'cs.slots': '👥 Team slots {n}/{m}', 'cs.teamcost': '💼 Team value {c} 🪙', 'cs.empty': 'Empty slot<br>Deploy an owned character',
+  'cs.note': 'Purchased characters are yours permanently. Deploy up to the slot limit. If one dies in a run it is lost for that run only and returns next run (no free revive mid-run).',
+  'cs.buy': 'Buy 🪙{c}', 'cs.owned': 'Owned ✔', 'cs.after': 'Left after purchase: {n} 🪙', 'cs.deploy': 'Deploy', 'cs.remove': 'Remove from team',
+  'cs.why.coin': 'Not enough coins ({n} 🪙 short)', 'cs.why.full': 'Team full {n}/{m} – remove someone first', 'cs.why.own': 'Buy first to deploy', 'cs.why.owned': 'Already owned (one per class)',
+  'cs.ok.buy': 'Bought {n}! Ready to deploy', 'cs.ok.dep': '{n} added to the team', 'cs.ok.rem': '{n} removed from the team',
+  'cs.pro': 'Strengths', 'cs.con': 'Weaknesses', 'cs.use': 'Use',
+  'sp.hp': 'HP', 'sp.dmg': 'Damage', 'sp.rate': 'Attack speed', 'sp.dps': 'DPS', 'sp.range': 'Range', 'sp.move': 'Move speed', 'sp.melee': 'Melee', 'sp.persec': '/s',
+  'hud.special': 'Special', 'tm.dead': '💀 Dead', 'tm.reload': '⏳ Reloading', 'tm.repair': '🔧 Repairing', 'tm.heal': '➕ Healing', 'tm.ready': 'Ready', 'tm.lure': '💣 Lure x{n}', 'tm.lurecd': '💣 Wait {s}s',
+  'ban.lostSp': '💀 {n} down!',
+  'res.lost': 'Units lost', 'res.base': 'Base left', 'res.run': 'Money earned this run ฿{n} (run-only, not saved)', 'res.head': 'Coin reward 🪙 (saved permanently)',
+  'res.b.base': 'Base reward', 'res.b.wave': 'Waves survived {n} × 15', 'res.b.clear': 'Stage clear bonus', 'res.b.perfect': 'No-losses bonus', 'res.b.total': 'Earned now', 'res.b.all': 'Total coins',
+  'res.fallen': '💀 Fallen: {n} (back next run)', 'res.shop': 'Shop',
+  'cls.fighter': 'Assault Fighter', 'cls.rifleman': 'Rifleman', 'cls.sniper': 'Sniper', 'cls.medic': 'Field Medic', 'cls.grenadier': 'Lure Grenadier', 'cls.heavy': 'Heavy Defender',
+  'role.fighter': 'Melee • Frontline', 'role.rifleman': 'Mid range • Steady damage', 'role.sniper': 'Long range • Precision', 'role.medic': 'Support • Repair', 'role.grenadier': 'Area control', 'role.heavy': 'Tank • Protector',
+  'ab.fighter': 'Swings a bat at melee range ({rg}); must run up to zombies, cannot hit distant targets',
+  'ab.rifleman': 'Auto-fires at mid range. Mag {m}, reload {rl}s',
+  'ab.sniper': 'Targets dangerous zombies first (boss/armored/spitter/screamer). Mag {m}, reload {rl}s',
+  'ab.medic': 'Repairs barricade/base {hp} HP every {iv}s (range {rg}) • heals low-HP allies {h} • costs ฿{c}/HP • stops when zombies are close',
+  'ab.grenadier': 'Lure grenade: zombies within {r} walk to the impact point for {d}s • cooldown {cd}s • {n} charges per run',
+  'ab.heavy': 'Taunt: {p}% of nearby zombies attack the shield • takes {a}% less damage',
+  'pro.fighter': 'More HP than gunners, strong at melee range', 'con.fighter': 'Dies when swarmed, cannot hit distant targets', 'use.fighter': 'Stand at the barricade and smash zombies that reach it',
+  'pro.rifleman': 'Steady sustained damage, good value', 'con.rifleman': 'Fragile once zombies reach him', 'use.rifleman': 'Rear line, thins out ordinary hordes',
+  'pro.sniper': 'Huge damage, long range, pierces armor well', 'con.sniper': 'Slow, low HP, poor against crowds', 'use.sniper': 'Brutes, armored, spitters, screamers',
+  'pro.medic': 'Extends barricade and base, heals allies', 'con.medic': 'Low damage, small repair cost, base is not invincible', 'use.medic': 'Behind the barricade near the base',
+  'pro.grenadier': 'Pulls hordes off the barricade and bunches them up', 'con.grenadier': 'Limited uses, weak attack, cannot lure bosses', 'use.grenadier': 'When a horde arrives; pair with explosive/piercing guns',
+  'pro.heavy': 'Huge HP, draws zombie attention', 'con.heavy': 'Slow, low damage, barely scratches armor', 'use.heavy': 'Stand in front to protect fragile allies'
+});
+LANG.th['how.body'] = LANG.th['how.body'].replace('</ol>', '<li>🛒 <b>ร้านค้า</b> (หน้าเมนู): ใช้เหรียญสะสม 🪙 จากการจบด่านซื้อตัวละครพิเศษ 6 คลาส แล้วส่งเข้าทีมก่อนเริ่มด่าน</li></ol>');
+LANG.en['how.body'] = LANG.en['how.body'].replace('</ol>', '<li>🛒 <b>Shop</b> (main menu): spend the coins 🪙 earned from runs to recruit 6 special classes, then deploy them before a stage.</li></ol>');
+Object.assign(LANG.th, {
+  'menu.up': 'อัปเกรด', 'up.title': '⬆ อัปเกรดถาวร', 'up.note': 'ใช้เหรียญสะสม 🪙 ที่ได้จากการจบด่าน อัปเกรดแล้วอยู่ถาวรทุกด่านทุกรอบ แต่ละอย่างมี 3 ขั้น (ช่องทีมมี 2 ขั้น)',
+  'up.max': 'สูงสุดแล้ว ✔', 'up.buy': 'อัปเกรด 🪙{c}', 'up.why': 'เหรียญไม่พอ (ขาดอีก {n} 🪙)', 'up.ok': 'อัปเกรด {n} สำเร็จ!',
+  'up.sec.vill': '👨‍🌾 ชาวบ้าน', 'up.sec.pol': '👮 ตำรวจ', 'up.sec.sp': '🎖 ตัวละครพิเศษ (มีผลกับทุกคน)', 'up.sec.gun': '🔫 สเตตัสปืนถาวร (3 ขั้นต่อกระบอก)',
+  'up.n.villIncome': 'รายได้ชาวบ้าน', 'up.n.villStart': 'ชาวบ้านตอนเริ่มด่าน', 'up.n.villMax': 'ชาวบ้านสูงสุด', 'up.n.polStart': 'ตำรวจตอนเริ่มด่าน (แจกปืนพกให้)', 'up.n.polMax': 'ตำรวจสูงสุด',
+  'up.n.spHp': 'เลือดตัวละครพิเศษ', 'up.n.spAtk': 'พลังโจมตีตัวละครพิเศษ', 'up.n.spSlots': 'ช่องทีมตัวละครพิเศษ',
+  'up.d.villIncome': 'เงินต่อวินาทีต่อชาวบ้าน 1 คน: {a} → {b}', 'up.d.villStart': 'ชาวบ้านที่มีตอนเริ่มด่าน: {a} → {b} คน', 'up.d.villMax': 'จำนวนชาวบ้านสูงสุด: {a} → {b} คน',
+  'up.d.polStart': 'ตำรวจพร้อมปืนพกตอนเริ่มด่าน (ฟรี ไม่ใช้ชาวบ้าน): {a} → {b} นาย', 'up.d.polMax': 'จำนวนตำรวจสูงสุด: {a} → {b} นาย',
+  'up.d.spHp': 'เลือดตัวละครพิเศษทุกคน: +{a}% → +{b}%', 'up.d.spAtk': 'ดาเมจตัวละครพิเศษทุกคน: +{a}% → +{b}%', 'up.d.spSlots': 'ช่องส่งตัวละครพิเศษเข้าทีม: {a} → {b} ช่อง',
+  'up.gun.stat': 'ดาเมจ {d} • ยิง/วิ {r} • แม็ก {m} • เปลี่ยนแม็ก {rl} วิ • ระยะ {rg}',
+  'gun.uzi': 'อูซี่ Uzi', 'gun.shotgun': 'ลูกซอง', 'gun.sniper': 'สไนเปอร์', 'gun.rpg': 'จรวด RPG',
+  'gun.note.uzi': 'ยิงเร็ว ราคาถูก แต่ดาเมจต่อนัดต่ำ', 'gun.note.shotgun': 'ยิง 6 เม็ด ยิ่งใกล้ยิ่งโดนหลายเม็ด ไกลแล้วกระจาย', 'gun.note.sniper': 'ดาเมจสูง ยิงไกล ยิงช้า เหมาะกับซอมบี้เกราะและตัวใหญ่', 'gun.note.rpg': 'จรวดระเบิดเป็นวง ดีกับฝูงซอมบี้ แต่ยิงช้า',
+  'b.police.max': 'ครบ {n} นายแล้ว', 'res.up': 'อัปเกรด',
+  'shop.guns': 'ซื้อปืน (1 ครั้ง = 1 กระบอก ใส่ได้ 1 นาย • ซื้อชนิดไหนก่อนก็ได้)'
+});
+Object.assign(LANG.en, {
+  'menu.up': 'Upgrades', 'up.title': '⬆ Permanent Upgrades', 'up.note': 'Spend the coins 🪙 earned at the end of runs. Upgrades are permanent. Each has 3 tiers (team slots have 2).',
+  'up.max': 'Maxed ✔', 'up.buy': 'Upgrade 🪙{c}', 'up.why': 'Not enough coins ({n} 🪙 short)', 'up.ok': '{n} upgraded!',
+  'up.sec.vill': '👨‍🌾 Villagers', 'up.sec.pol': '👮 Police', 'up.sec.sp': '🎖 Special characters (all of them)', 'up.sec.gun': '🔫 Permanent gun stats (3 tiers per gun)',
+  'up.n.villIncome': 'Villager income', 'up.n.villStart': 'Starting villagers', 'up.n.villMax': 'Max villagers', 'up.n.polStart': 'Starting police (free pistol)', 'up.n.polMax': 'Max police',
+  'up.n.spHp': 'Special character HP', 'up.n.spAtk': 'Special character damage', 'up.n.spSlots': 'Special team slots',
+  'up.d.villIncome': 'Money per second per villager: {a} → {b}', 'up.d.villStart': 'Villagers at stage start: {a} → {b}', 'up.d.villMax': 'Max villagers: {a} → {b}',
+  'up.d.polStart': 'Officers with a pistol at stage start (free, no villager used): {a} → {b}', 'up.d.polMax': 'Max police: {a} → {b}',
+  'up.d.spHp': 'HP of every special character: +{a}% → +{b}%', 'up.d.spAtk': 'Damage of every special character: +{a}% → +{b}%', 'up.d.spSlots': 'Special team slots: {a} → {b}',
+  'up.gun.stat': 'Damage {d} • {r} shots/s • Mag {m} • Reload {rl}s • Range {rg}',
+  'gun.uzi': 'Uzi', 'gun.shotgun': 'Shotgun', 'gun.sniper': 'Sniper Rifle', 'gun.rpg': 'RPG Launcher',
+  'gun.note.uzi': 'Fast and cheap but low damage per bullet', 'gun.note.shotgun': '6 pellets; more hit at close range, spreads out far away', 'gun.note.sniper': 'High damage, long range, slow; great vs armored and big zombies', 'gun.note.rpg': 'Explosive rockets hit groups; slow fire rate',
+  'b.police.max': 'Max {n} reached', 'res.up': 'Upgrades',
+  'shop.guns': 'Buy guns (1 purchase = 1 gun, 1 officer • buy any type in any order)'
+});
+LANG.th['how.body'] = LANG.th['how.body'].replace('</ol>', '<li>⬆ <b>อัปเกรด</b> (หน้าเมนู): ใช้เหรียญสะสมอัปเกรดชาวบ้าน ตำรวจ ตัวละครพิเศษ และสเตตัสปืนแบบถาวร</li></ol>');
+LANG.en['how.body'] = LANG.en['how.body'].replace('</ol>', '<li>⬆ <b>Upgrades</b> (main menu): spend coins on permanent upgrades for villagers, police, special characters and gun stats.</li></ol>');
+let lang = 'th';
+const t = (k, p) => {
+  let s = (LANG[lang] && LANG[lang][k] != null) ? LANG[lang][k] : (LANG.th[k] != null ? LANG.th[k] : k);
+  if (p) for (const q in p) s = s.split('{' + q + '}').join(p[q]);
+  return s;
+};
+const I18N = {
+  apply() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(e => { e.textContent = t(e.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-html]').forEach(e => { e.innerHTML = t(e.getAttribute('data-i18n-html')); });
+    document.title = t('menu.title') + ' – Zombie Survival Base Defense';
+  }
+};
+
+/* ========================= 1c) ตั้งค่า / เซฟ / เสียง ========================= */
+const Settings = {
+  sfx: 0.6, music: 0.3, mute: false, lang: 'th',
+  load() {
+    try { Object.assign(this, JSON.parse(localStorage.getItem('zbd_settings') || '{}')); } catch (e) { /* ไม่มี localStorage */ }
+    lang = LANG[this.lang] ? this.lang : 'th';
+  },
+  save() { try { localStorage.setItem('zbd_settings', JSON.stringify({ sfx: this.sfx, music: this.music, mute: this.mute, lang: this.lang, howtoNever: this.howtoNever })); } catch (e) { } }
+};
+// ความคืบหน้าด่าน (ปลดล็อก/ผ่านแล้ว)
+const Save = {
+  maxStage: 1, cleared: {}, coins: 0, owned: {}, team: [], up: { gun: {} },     // up = อัปเกรดถาวร
+  load() {
+    try {
+      const d = JSON.parse(localStorage.getItem('zbd_progress') || '{}');
+      if (d.maxStage) this.maxStage = d.maxStage; if (d.cleared) this.cleared = d.cleared; if (d.coins) this.coins = d.coins;
+      if (d.owned) this.owned = d.owned; if (Array.isArray(d.team)) this.team = d.team;
+      if (d.up) { for (const k of PERM_KEYS) if (d.up[k]) this.up[k] = d.up[k]; if (d.up.gun) this.up.gun = d.up.gun; }
+    } catch (e) { }
+    this.sanitize();
+  },
+  sanitize() {
+    for (const k of PERM_KEYS) this.up[k] = clamp(Math.floor(this.up[k] || 0), 0, CONFIG.perm[k].values.length);
+    for (const g of CONFIG.guns) this.up.gun[g.id] = clamp(Math.floor(this.up.gun[g.id] || 0), 0, 3);
+    this.team = [...new Set(this.team)].filter(id => SPECIAL_IDS.includes(id) && this.owned[id]).slice(0, teamSlots());
+  },
+  save() { try { localStorage.setItem('zbd_progress', JSON.stringify({ maxStage: this.maxStage, cleared: this.cleared, coins: this.coins, owned: this.owned, team: this.team, up: this.up })); } catch (e) { } }
+};
+
+// เสียงสังเคราะห์ด้วย WebAudio (ไม่ต้องมีไฟล์เสียง)
+const Sound = {
+  ctx: null, sfx: null, mus: null, last: {}, step: 0, nbuf: null,
+  init() {
+    if (this.ctx || typeof AudioContext === 'undefined') return;
+    try {
+      this.ctx = new AudioContext();
+      this.sfx = this.ctx.createGain(); this.mus = this.ctx.createGain();
+      this.sfx.connect(this.ctx.destination); this.mus.connect(this.ctx.destination);
+      this.applyVol();
+      setInterval(() => this.musicTick(), 520);
+    } catch (e) { this.ctx = null; }
+  },
+  resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  applyVol() {
+    if (!this.ctx) return;
+    const m = Settings.mute ? 0 : 1;
+    this.sfx.gain.value = Settings.sfx * m; this.mus.gain.value = Settings.music * m * 0.5;
+  },
+  tone(f, d, type, v, slide, delay, dest) {
+    const c = this.ctx, o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime + (delay || 0);
+    o.type = type || 'square'; o.frequency.setValueAtTime(f, t0);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t0 + d);
+    g.gain.setValueAtTime(v || .2, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + d);
+    o.connect(g); g.connect(dest || this.sfx); o.start(t0); o.stop(t0 + d + .02);
+  },
+  noise(d, v, freq) {
+    const c = this.ctx;
+    if (!this.nbuf) { const n = c.sampleRate; this.nbuf = c.createBuffer(1, n, n); const a = this.nbuf.getChannelData(0); for (let i = 0; i < n; i++) a[i] = Math.random() * 2 - 1; }
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(), t0 = c.currentTime;
+    s.buffer = this.nbuf; f.type = 'lowpass'; f.frequency.value = freq;
+    g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + d);
+    s.connect(f); f.connect(g); g.connect(this.sfx); s.start(t0); s.stop(t0 + d + .02);
+  },
+  musicTick() {
+    if (!this.ctx || Settings.mute || Settings.music <= 0) return;
+    const notes = [55, 55, 65.41, 55, 73.42, 55, 65.41, 49], f = notes[this.step % 8];
+    this.tone(f, .5, 'triangle', .5, null, 0, this.mus);
+    if (this.step % 8 === 0) this.tone(f * 4, 1.4, 'sine', .12, null, 0, this.mus);
+    if (this.step % 16 === 6) this.tone(f * 6, .8, 'sine', .08, null, 0, this.mus);
+    this.step++;
+  },
+  play(name, arg) {
+    if (!this.ctx || Settings.mute || Settings.sfx <= 0) return;
+    const key = name + (arg == null ? '' : arg), now = performance.now();
+    const gap = { shoot: 45, kill: 60, thud: 110, baseHit: 160 }[name] || 0;
+    if (gap && now - (this.last[key] || 0) < gap) return;
+    this.last[key] = now;
+    const tr = arg || 0;
+    switch (name) {
+      case 'shoot': this.noise(.05 + tr * .02, .35, [2500, 3200, 2200, 1400][tr]); this.tone([520, 380, 260, 150][tr], .07, 'square', .1, 60); break;
+      case 'reload': this.tone(900, .05, 'square', .12); this.tone(600, .07, 'square', .12, null, .2); break;
+      case 'kill': this.tone(180, .18, 'sawtooth', .15, 50); break;
+      case 'thud': this.noise(.12, .4, 350); break;
+      case 'baseHit': this.tone(110, .2, 'square', .22, 60); break;
+      case 'buy': this.tone(660, .07, 'square', .12); this.tone(990, .1, 'square', .12, null, .07); break;
+      case 'click': this.tone(800, .04, 'square', .08); break;
+      case 'wave': this.tone(196, .8, 'sawtooth', .22, 330); break;
+      case 'boss': this.tone(70, 1.3, 'sawtooth', .35, 40); this.noise(.9, .3, 400); break;
+      case 'lure': this.tone(500, .12, 'sine', .2, 900); this.tone(900, .15, 'sine', .15, 500, .12); break;
+      case 'win': [523, 659, 784, 1047].forEach((f, i) => this.tone(f, .25, 'triangle', .22, null, i * .15)); break;
+      case 'lose': this.tone(300, 1.2, 'sawtooth', .28, 60); break;
+    }
+  }
+};
+
+/* ========================= 2) ASSETS =========================
+   ใส่พาธรูป png แทน null เพื่อเปลี่ยนภาพ Unit (null = วาด placeholder เรขาคณิต) */
+const SPRITES = {
+  villager: null, police: null, zombie: null, infected: null, boss: null,
+  barricade: null, base: null, bg: null
+};
+/* w,h=ขนาดวาด | anchor=จุดยึด 0..1 | facing=ทิศที่ภาพต้นฉบับหัน (1 ขวา,-1 ซ้าย)
+   frameWidth/Height=ขนาด 1 เฟรมของ sprite sheet (null=ภาพนิ่ง) | anims={สถานะ:{row,frames,fps,loop}} */
+const A = (row, frames, fps, loop = true) => ({ row, frames, fps, loop });
+const unitAnims = () => ({ idle: A(0, 4, 6), walk: A(1, 6, 10), attack: A(2, 4, 10), die: A(3, 5, 10, false) });
+const SPRITE_CONFIG = {
+  villager: { w: 34,  h: 58,  anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: unitAnims() },
+  police:   { w: 34,  h: 58,  anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: unitAnims() },
+  zombie:   { w: 34,  h: 58,  anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: unitAnims() },
+  infected: { w: 46,  h: 76,  anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: unitAnims() },
+  boss:     { w: 120, h: 160, anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: unitAnims() },
+  barricade:{ w: 110, h: 140, anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: {} },
+  base:     { w: 170, h: 150, anchor: { x: .5, y: 1 }, facing: 1, frameWidth: null, frameHeight: null, anims: {} },
+  bg:       {}
+};
+
+const Assets = {
+  images: {},
+  load() { for (const k in SPRITES) this.set(k, SPRITES[k]); },
+  set(key, path) {
+    const e = { img: null, ready: false };
+    this.images[key] = e;
+    if (!path) return;
+    const img = new Image();
+    img.onload = () => { e.ready = true; };
+    img.onerror = () => console.warn('โหลดรูปไม่สำเร็จ:', key, path, '→ ใช้ placeholder แทน');
+    img.src = path;
+    e.img = img;
+  },
+  ready(key) { const e = this.images[key]; return !!(e && e.ready); },
+  hasAnim(key, state) { const c = SPRITE_CONFIG[key]; return this.ready(key) && !!c.frameWidth && !!(c.anims && c.anims[state]); },
+  animDuration(key, state, def) { return this.hasAnim(key, state) ? SPRITE_CONFIG[key].anims[state].frames / SPRITE_CONFIG[key].anims[state].fps : def; },
+  drawBg(ctx) {
+    if (!this.ready('bg')) return false;
+    ctx.drawImage(this.images.bg.img, 0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+    return true;
+  },
+  draw(ctx, key, state, t, x, y, o = {}) {
+    if (!this.ready(key)) return false;
+    const cfg = SPRITE_CONFIG[key], img = this.images[key].img, sheet = !!cfg.frameWidth;
+    const fw = sheet ? cfg.frameWidth : img.naturalWidth, fh = sheet ? cfg.frameHeight : img.naturalHeight;
+    let sx = 0, sy = 0;
+    if (sheet) {
+      const maxF = Math.max(0, Math.floor(img.naturalWidth / fw) - 1);
+      if (o.frame != null) sx = Math.min(o.frame, maxF) * fw;
+      else {
+        const a = cfg.anims && (cfg.anims[state] || cfg.anims.idle);
+        if (a) {
+          let f = Math.floor(t * a.fps);
+          f = a.loop === false ? Math.min(f, a.frames - 1) : f % a.frames;
+          sx = Math.min(f, maxF) * fw; sy = a.row * fh;
+        }
+      }
+    }
+    const w = o.w || cfg.w, h = o.h || cfg.h;
+    ctx.save();
+    ctx.translate(x, y);
+    if (o.alpha != null) ctx.globalAlpha = o.alpha;
+    if (o.rot) ctx.rotate(-(o.dir || 1) * o.rot);
+    if (o.dir && o.dir !== (cfg.facing || 1)) ctx.scale(-1, 1);
+    ctx.drawImage(img, sx, sy, fw, fh, -w * cfg.anchor.x, -h * cfg.anchor.y, w, h);
+    ctx.restore();
+    return true;
+  }
+};
+
+/* ========================= 3) STATE ========================= */
+let S;                 // สถานะเกม (ด่านปัจจุบัน)
+let screen = 'menu';   // 'menu' | 'stages' | 'game'
+
+function newGame(stage) {
+  const E = CONFIG.economy;
+  stage = stage || (S && S.stage) || 1;
+  S = {
+    stage, sp: stageParams(stage),
+    time: 0, money: E.startMoney + CONFIG.stages.startMoneyPerStage * (stage - 1), villagers: permVal('villStart'), villBought: 0,
+    police: [],                                   // {x,y,gun:index ใน S.guns หรือ -1,...}
+    guns: [],                                     // ปืนที่ซื้อมา (1 กระบอกต่อ 1 รายการ) {tier,ammo,reload,owner}
+    boughtTier: CONFIG.guns.map(() => 0),
+    upg: { pierce: false, explode: false },
+    barLevel: 1, barHp: CONFIG.barricade.hpPerLevel[0], baseHp: CONFIG.base.maxHp,
+    zombies: [], vills: [], tracers: [], rings: [], floats: [],
+    specials: mkSpecials(), lures: [], grenades: [], fallen: [],
+    gcfg: buildGunCfg(), villMax: permVal('villMax'), policeMax: permVal('polMax'), incomePer: permVal('villIncome'), polStartN: permVal('polStart'),
+    shake: 0, barHit: 0, baseHit: 0, kills: 0,
+    phase: 'rest', timer: CONFIG.wave.firstPrep, nextWave: 1, wave: 0,
+    spawnQ: [], waveTime: 0, banner: null,
+    maxWaves: waveCount(stage), lost: 0, rewarded: false, spits: [],
+    incomeAcc: 0, incomeTimer: 0, paused: false, speed: 1, over: false, cleared: false
+  };
+  for (let i = 0; i < S.polStartN; i++) {          // ตำรวจเริ่มต้น (อัปเกรดถาวร) พร้อมปืนพกฟรี
+    const pi = makePolice(); S.guns.push({ tier: 0, ammo: S.gcfg[0].mag, reload: 0, owner: -1 }); equip(pi, S.guns.length - 1);
+  }
+  if (typeof UI !== 'undefined') UI.onNewGame();
+}
+
+const barMaxHp = () => CONFIG.barricade.hpPerLevel.slice(0, S.barLevel).reduce((a, b) => a + b, 0);
+const villagerCost = () => Math.ceil(CONFIG.economy.villager.baseCost * Math.pow(CONFIG.economy.villager.growth, S.villBought));
+const livePolice = () => S.police.filter(p => !p.dead);
+const policeCost = () => Math.ceil(CONFIG.economy.police.baseCost * Math.pow(CONFIG.economy.police.growth, Math.max(0, livePolice().length - S.polStartN)));
+const gunPrice = i => Math.ceil(CONFIG.guns[i].price * Math.pow(CONFIG.economy.gunPriceGrowth, S.boughtTier[i]));
+const barUpgradeCost = () => S.barLevel >= CONFIG.barricade.hpPerLevel.length ? null : CONFIG.barricade.upgradeCost[S.barLevel - 1];
+const repairCost = () => Math.ceil((barMaxHp() - S.barHp) * CONFIG.barricade.repairCostPerHp);
+const baseRepairCost = () => Math.ceil((CONFIG.base.maxHp - S.baseHp) * CONFIG.base.repairCostPerHp);
+const tierOf = w => { const ts = CONFIG.wave.tiers; const i = ts.findIndex(x => w <= x.to); return { i: i < 0 ? ts.length - 1 : i, ...ts[i < 0 ? ts.length - 1 : i] }; };
+const policeGun = p => p.gun >= 0 ? S.guns[p.gun] : null;
+
+/* ---- ตัวละครพิเศษ ---- */
+function mkSpecials() { return (Save.team || []).map((cls, i) => mkSpecial(cls, i)); }
+function mkSpecial(cls, i) {
+  const K = CONFIG.specials[cls], A = K.atk, hp0 = Math.round(K.hp * (1 + permVal('spHp')));
+  return { cls, special: true, x: K.homeX - Math.floor(i / 3) * 18, y: [436, 462, 412][i % 3], hx: K.homeX - Math.floor(i / 3) * 18, hy: [436, 462, 412][i % 3],
+    hp: hp0, maxHp: hp0, dmgMul: 1 + permVal('spAtk'), dead: false, dieT: 0, hurt: 0, cd: .3, t: Math.random() * 5, recoil: 0, attackT: 0, ammo: A.mag || 0, reload: 0,
+    abCd: 3, charges: K.ability ? K.ability.charges : 0, rep: 0, work: null, dir: 1, moving: false, gun: -1 };
+}
+const allUnits = () => S.police.concat(S.specials);
+const liveUnits = () => allUnits().filter(u => !u.dead);
+
+function policePos(i) {
+  const W = CONFIG.world;
+  return { x: W.policeRight - (Math.floor(i / 3) % 5) * 26 - Math.floor(i / 15) * 9, y: W.groundTop + 26 + (i % 3) * 26 };
+}
+function newVill() {
+  return { x: rand(25, 150), y: rand(CONFIG.world.groundTop + 14, CONFIG.world.groundBottom), tx: rand(25, 150), ty: rand(CONFIG.world.groundTop + 14, CONFIG.world.groundBottom), wait: rand(0, 2), t: Math.random() * 5, dir: 1, moving: false };
+}
+
+// ใส่ปืนให้ตำรวจ (1 กระบอกต่อ 1 นาย) gi = -1 คือถอดปืน
+function equip(pi, gi) {
+  const p = S.police[pi];
+  if (p.gun >= 0) S.guns[p.gun].owner = -1;
+  p.gun = gi;
+  if (gi >= 0) S.guns[gi].owner = pi;
+}
+function autoEquip() {
+  S.police.forEach((p, i) => { p.gun = -1; });
+  S.guns.forEach(g => g.owner = -1);
+  const order = S.guns.map((g, i) => i).sort((a, b) => S.guns[b].tier - S.guns[a].tier);
+  const live = S.police.map((p, i) => i).filter(i => !S.police[i].dead);
+  order.forEach((gi, k) => { if (k < live.length) equip(live[k], gi); });
+}
+
+/* ---- การกระทำของผู้เล่น ---- */
+function buyVillager() {
+  const c = villagerCost();
+  if (S.over || S.money < c || S.villagers >= S.villMax) return;
+  S.money -= c; S.villagers++; S.villBought++; Sound.play('buy');
+}
+function makePolice() {
+  S.police.push({ ...policePos(S.police.length), gun: -1, hp: CONFIG.economy.police.hp, maxHp: CONFIG.economy.police.hp, dead: false, dieT: 0, hurt: 0, cd: Math.random() * .5, t: Math.random() * 5, recoil: 0, attackT: 0, dir: 1 });
+  return S.police.length - 1;
+}
+function buyPolice() {
+  const P = CONFIG.economy.police, c = policeCost();
+  if (S.over || S.money < c || S.villagers - P.villagersRequired < P.minVillagersLeft || livePolice().length >= S.policeMax) return;
+  S.money -= c; S.villagers -= P.villagersRequired;
+  makePolice();
+  // ใส่ปืนว่างที่แรงสุดให้อัตโนมัติ
+  let best = -1;
+  S.guns.forEach((g, i) => { if (g.owner === -1 && (best < 0 || g.tier > S.guns[best].tier)) best = i; });
+  if (best >= 0) equip(S.police.length - 1, best);
+  Sound.play('buy'); UI.refreshShop();
+}
+function upgradeBarricade() {
+  const c = barUpgradeCost(); if (S.over || c == null || S.money < c) return;
+  S.money -= c; S.barHp += CONFIG.barricade.hpPerLevel[S.barLevel]; S.barLevel++; Sound.play('buy');
+}
+function repairBarricade() {
+  const c = repairCost(); if (S.over || c <= 0 || S.money < c) return;
+  S.money -= c; S.barHp = barMaxHp(); Sound.play('buy');
+}
+function repairBase() {
+  const c = baseRepairCost(); if (S.over || c <= 0 || S.money < c) return;
+  S.money -= c; S.baseHp = CONFIG.base.maxHp; Sound.play('buy');
+}
+function gunUnlocked(i) { return true; }      // ซื้อปืนชนิดไหนก่อนก็ได้ (จำกัดด้วยราคา)
+function buyGun(i) {
+  const g = S.gcfg[i], c = gunPrice(i);
+  if (S.over || !gunUnlocked(i) || S.money < c) return;
+  S.money -= c; S.boughtTier[i]++;
+  S.guns.push({ tier: i, ammo: g.mag, reload: 0, owner: -1 });
+  const free = S.police.findIndex(p => p.gun < 0 && !p.dead);          // ใส่ให้ตำรวจที่ยังไม่มีปืนก่อน
+  if (free >= 0) equip(free, S.guns.length - 1);
+  Sound.play('buy'); UI.refreshShop();
+}
+function buyUpgrade(k) {
+  const u = CONFIG.upgrades[k];
+  if (S.over || S.upg[k] || S.boughtTier[u.needGun] <= 0 || S.money < u.price) return;
+  S.money -= u.price; S.upg[k] = true; Sound.play('buy'); UI.refreshShop();
+}
+function hurtPolice(p, d) {                    // ใช้กับตำรวจและตัวละครพิเศษทุกคลาส
+  if (p.dead || S.over) return;
+  if (p.cls) d *= 1 - (CONFIG.specials[p.cls].armor || 0);
+  p.hp -= d; p.hurt = .15; addFloat(p.x, p.y - 62, '-' + Math.round(d), '#ff6a5a');
+  if (p.hp <= 0) {
+    p.hp = 0; p.dead = true; p.dieT = 0; S.lost++; p.work = null;
+    if (p.cls) S.fallen.push(p.cls);
+    if (p.gun >= 0) { S.guns[p.gun].owner = -1; p.gun = -1; }
+    burst(p.x, p.y - 30, p.cls ? CONFIG.specials[p.cls].color : '#3a64c8', 12);
+    S.banner = { text: p.cls ? t('ban.lostSp', { n: t('cls.' + p.cls) }) : t('ban.lost'), sub: '', t: 1.6, max: 1.6 }; Sound.play('baseHit'); UI.refreshShop();
+  }
+}
+function skipRest() { if (!S.over && S.phase === 'rest') S.timer = 0; }
+
+/* ========================= 4) UPDATE ========================= */
+function update(dt) {
+  S.time += dt;
+  const inc = S.villagers * S.incomePer;
+  S.money += inc * dt; S.incomeAcc += inc * dt; S.incomeTimer += dt;
+  if (S.incomeTimer >= 1) {
+    if (S.incomeAcc >= 1) addFloat(CONFIG.world.baseX, CONFIG.world.baseY - SPRITE_CONFIG.base.h - 20, '+' + fmt(S.incomeAcc), '#ffd54a');
+    S.incomeAcc = 0; S.incomeTimer = 0;
+  }
+  updateWave(dt);
+  updateVillagers(dt);
+  updatePolice(dt);
+  updateSpecials(dt);
+  updateZombies(dt);
+  updateEffects(dt);
+  if (S.baseHp <= 0 && !S.over) { S.baseHp = 0; S.over = true; Sound.play('lose'); UI.showResult(false); }
+}
+
+/* ---- เวฟ ---- */
+function updateWave(dt) {
+  if (S.phase === 'rest') {
+    S.timer -= dt;
+    if (S.timer <= 0) startWave();
+  } else {
+    S.waveTime += dt;
+    while (S.spawnQ.length && S.spawnQ[0].t <= S.waveTime) spawnZombie(S.spawnQ.shift().type);
+    if (!S.spawnQ.length && !S.zombies.some(z => z.state !== 'die')) endWave();
+  }
+}
+function startWave() {
+  const W = CONFIG.wave, SC = CONFIG.stages;
+  S.wave = S.nextWave++; S.phase = 'fight'; S.waveTime = 0;
+  const tier = tierOf(S.wave);
+  const n = Math.round((W.baseCount + W.countPerWave * (S.wave - 1)) * S.sp.count);
+  const chance = tier.infectedChance > 0 ? Math.min(.7, tier.infectedChance + S.sp.infected) : 0;
+  const q = [];
+  for (let i = 0; i < n; i++) {
+    q.push({ t: (i + Math.random() * .8) / n * W.spawnDuration, type: pickType(chance) });
+  }
+  const boss = S.stage >= W.bossFromStage && (S.wave % W.bossEvery === 0 || (S.wave === S.maxWaves && S.stage % SC.finalBossEvery === 0));
+  if (boss) q.push({ t: 1.5, type: 'boss' });
+  q.sort((a, b) => a.t - b.t);
+  S.spawnQ = q;
+  S.banner = { text: t('ban.wave', { s: S.stage, w: S.wave, m: S.maxWaves }), sub: t('ban.tier', { t: t('tier' + tier.i) }) + (boss ? '  ' + t('ban.boss') : ''), t: 2.8, max: 2.8 };
+  Sound.play(boss ? 'boss' : 'wave');
+}
+function pickType(chance) {
+  const s = S.stage, w = S.wave, r = Math.random(); let a = 0;
+  if (s < CONFIG.wave.specialFromStage) return 'normal';      // ด่าน 1-5: ซอมบี้ธรรมดาล้วน ไม่มีตัวพิเศษ
+  const T = [['runner', .12 + .02 * s], ['infected', w >= W_INF() ? chance : 0], ['armored', s >= 6 ? .1 + .01 * s : 0], ['exploder', s >= 7 ? .08 : 0], ['spitter', s >= 8 ? .1 : 0], ['screamer', s >= 9 ? .05 : 0]];
+  for (const [ty, wt] of T) { a += wt; if (r < a) return ty; }
+  return 'normal';
+}
+const W_INF = () => CONFIG.wave.infectedStartWave;
+function endWave() {
+  if (S.wave >= S.maxWaves) {      // ผ่านครบทุกเวฟ = ผ่านด่าน
+    S.over = true; S.cleared = true;
+    Save.cleared[S.stage] = true; Save.maxStage = Math.max(Save.maxStage, Math.min(CONFIG.stages.count, S.stage + 1)); Save.save();
+    Sound.play('win'); UI.showResult(true);
+    return;
+  }
+  S.phase = 'rest'; S.timer = CONFIG.wave.rest;
+}
+
+/* ---- ซอมบี้ ---- */
+function spawnZombie(type) {
+  const Zc = CONFIG.zombies, cfg = Zc[type], Wc = CONFIG.wave, Wd = CONFIG.world, sc = SPRITE_CONFIG[cfg.key], sp = S.sp;
+  const hp = Zc.baseHp * (1 + Wc.hpGrowth * (S.wave - 1)) * cfg.hpMul * sp.hp;
+  const dmg = Zc.baseDmg * (1 + Wc.dmgGrowth * (S.wave - 1)) * cfg.dmgMul * sp.dmg;
+  S.zombies.push({
+    type, key: cfg.key, x: Wd.spawnX + rand(0, 40),
+    y: type === 'boss' ? Wd.groundBottom - 6 : rand(Wd.groundTop + 8, Wd.groundBottom),
+    hp, maxHp: hp, dmg, speed: cfg.speed * sp.speed * rand(.88, 1.12), atkInterval: cfg.atkInterval,
+    cd: cfg.atkInterval * Math.random(), reward: Math.round(cfg.reward * sp.reward), w: sc.w * (cfg.scale || 1), h: sc.h * (cfg.scale || 1),
+    state: 'walk', t: Math.random(), dieT: 0, dieDur: Assets.animDuration(cfg.key, 'die', 0.7),
+    flash: 0, taunt: Math.random() < CONFIG.specials.heavy.taunt.chance, faceR: false, enraged: false, stopOff: rand(2, 34) + (type === 'boss' ? 30 : 0)
+  });
+}
+function hitZombie(z, dmg) {
+  if (z.state === 'die') return;
+  const p2 = CONFIG.zombies.boss.phase2;
+  if (z.enraged) dmg *= 1 - p2.resist;
+  const za = CONFIG.zombies[z.type]; if (za.armor) dmg = dmg >= za.pierceAt ? dmg * (1 - za.armor * .35) : Math.max(1, dmg * (1 - za.armor));
+  z.hp -= dmg; z.flash = .08;
+  if (z.hp <= 0) { killZombie(z); return; }
+  if (z.type === 'boss' && !z.enraged && z.hp / z.maxHp < p2.hpPct) enrageBoss(z);
+}
+function enrageBoss(z) {
+  const p2 = CONFIG.zombies.boss.phase2;
+  z.enraged = true; z.dmg *= p2.dmgMul; z.atkInterval /= p2.atkSpeedMul; z.speed *= 1.3; S.shake = .7;
+  S.banner = { text: t('ban.enrage'), sub: t('ban.enrage.s', { r: Math.round(p2.resist * 100) }), t: 2.5, max: 2.5 };
+  Sound.play('boss');
+}
+function killZombie(z) {
+  z.state = 'die'; z.t = 0; z.dieT = 0; S.money += z.reward; S.kills++;
+  addFloat(z.x, z.y - z.h, '+' + z.reward, '#ffd54a'); Sound.play('kill');
+  burst(z.x, z.y - z.h * .5, z.type === 'infected' ? '#9be23a' : '#c0392b', z.type === 'boss' ? 24 : 9);
+  if (z.type === 'boss') { S.shake = .8; S.banner = { text: t('ban.bossdead'), sub: t('ban.bossdead.s', { n: z.reward }), t: 2.5, max: 2.5 }; }
+}
+function spit(z) {
+  const live = liveUnits(), W = CONFIG.world, pol = live.length && Math.random() < .6 ? live[(Math.random() * live.length) | 0] : null;
+  if (S.spits.length < 30) S.spits.push({ x0: z.x, y0: z.y - z.h * .6, tx: pol ? pol.x : (S.barHp > 0 ? W.barFront - 10 : W.baseFront), ty: pol ? pol.y - 30 : W.groundTop + 40, t: 0, dur: .7, dmg: z.dmg, pol, x: z.x, y: z.y });
+}
+function detonate(z, zc) {
+  const Wd = CONFIG.world, d = zc.blast * z.dmg / CONFIG.zombies.baseDmg;
+  S.rings.push({ x: z.x, y: z.y - 6, r: 0, max: zc.radius, life: .35, max2: .35 }); S.shake = .4; Sound.play('boss');
+  if (S.barHp > 0 && Math.abs(z.x - Wd.barFront) < zc.radius) { S.barHp = Math.max(0, S.barHp - d); S.barHit = .2; }
+  else if (z.x - Wd.baseFront < zc.radius) { S.baseHp -= d; S.baseHit = .2; }
+  for (const p of liveUnits()) if (Math.abs(p.x - z.x) < zc.radius) hurtPolice(p, d * .5);
+  burst(z.x, z.y - 20, '#ff9a2a', 20); z.state = 'die'; z.t = 0; z.dieT = 0;
+}
+function updateZombies(dt) {
+  const Wd = CONFIG.world, units = liveUnits();
+  for (const z of S.zombies) {
+    z.t += dt; z.flash = Math.max(0, z.flash - dt);
+    if (z.state === 'die') { z.dieT += dt; continue; }
+    const zc = CONFIG.zombies[z.type], atBar = S.barHp > 0 && z.x > Wd.barFront - 6;
+    let stopX = atBar ? Wd.barFront + z.stopOff : Wd.baseFront + z.stopOff * .5;
+    if (zc.summon) {
+      if (z.warn > 0) { z.warn -= dt; z.flash = (Math.floor(z.warn * 10) % 2) ? .08 : 0; if (z.warn <= 0) { for (let i = 0; i < zc.summon.n; i++) S.spawnQ.unshift({ t: 0, type: 'runner' }); S.shake = .3; Sound.play('boss'); } }
+      else if ((z.sums || 0) < zc.summon.max) { z.sumT = (z.sumT == null ? 5 : z.sumT) - dt; if (z.sumT <= 0) { z.warn = .9; z.sums = (z.sums || 0) + 1; z.sumT = zc.summon.cd; } }
+    }
+    z.faceR = false;
+    const lure = (z.type !== 'boss' && z.fuse == null) ? S.lures.find(l => l.t > 0 && Math.hypot(z.x - l.x, (z.y - l.y) * 1.6) < l.r) : null;
+    if (lure) {                                   // ระเบิดล่อ: เดินเข้าหาจุดตกชั่วคราว หมดเวลาแล้วกลับไปเป้าหมายเดิม
+      const dx = lure.x - z.x;
+      if (Math.abs(dx) > 10) { z.x += Math.sign(dx) * Math.min(Math.abs(dx), z.speed * dt * .9); z.state = 'walk'; z.faceR = dx > 0; } else z.state = 'idle';
+      continue;
+    }
+    if (zc.range) {
+      stopX = (S.barHp > 0 ? Wd.barFront : Wd.baseFront) + zc.range - 40 + z.stopOff * .5;
+      if (z.x > stopX) { z.x -= z.speed * dt; z.state = 'walk'; if (z.x < stopX) z.x = stopX; continue; }
+      z.state = 'attack'; z.cd -= dt; if (z.cd <= 0) { z.cd += z.atkInterval; spit(z); } continue;
+    }
+    if (zc.explode) {
+      if (z.fuse == null && z.x > stopX) { z.x -= z.speed * dt; z.state = 'walk'; if (z.x < stopX) z.x = stopX; continue; }
+      z.state = 'attack'; if (z.fuse == null) z.fuse = zc.fuse; z.fuse -= dt; z.flash = (Math.floor(z.fuse * 8) % 2) ? .08 : 0;
+      if (z.fuse <= 0) detonate(z, zc); continue;
+    }
+    let tp = null;
+    if (z.taunt) for (const h of units) { const T = h.cls && CONFIG.specials[h.cls].taunt; if (T && !h.dead && Math.abs(z.x - h.x) < T.radius && Math.abs(z.y - h.y) < 44 && z.x > h.x - 10) { tp = h; break; } }
+    if (!tp && !atBar) for (const p of units) if (!p.dead && p.x < z.x && z.x - p.x < 38 && Math.abs(p.y - z.y) < 34) { tp = p; break; }
+    if (tp && tp.cls && z.x - tp.x > 38) { z.x -= z.speed * dt; z.state = 'walk'; continue; }
+    if (z.x > stopX && !tp) { z.x -= z.speed * dt; z.state = 'walk'; if (z.x < stopX) z.x = stopX; }
+    else {
+      z.state = 'attack'; z.cd -= dt;
+      if (z.cd <= 0) {
+        z.cd += z.atkInterval;
+        if (tp) { hurtPolice(tp, z.dmg * .6); Sound.play('thud'); }
+        else if (atBar) { S.barHp = Math.max(0, S.barHp - z.dmg); S.barHit = .12; Sound.play('thud'); burst(Wd.barFront, z.y - 30, '#a07040', 4, .6); }
+        else { S.baseHp -= z.dmg; S.baseHit = .12; Sound.play('baseHit'); }
+      }
+    }
+  }
+  S.zombies = S.zombies.filter(z => !(z.state === 'die' && z.dieT >= z.dieDur));
+}
+
+/* ---- ตำรวจ: ยิง/กระสุน/เปลี่ยนแม็ก ---- */
+function updatePolice(dt) {
+  for (const p of S.police) {
+    if (p.dead) { p.dieT += dt; continue; }
+    p.hurt = Math.max(0, p.hurt - dt);
+    p.t += dt; p.cd = Math.max(0, p.cd - dt); p.recoil = Math.max(0, p.recoil - dt * 8); p.attackT = Math.max(0, p.attackT - dt);
+    const gi = policeGun(p); if (!gi) continue;
+    const g = S.gcfg[gi.tier];
+    if (gi.reload > 0) {                                  // กำลังเปลี่ยนแม็ก
+      gi.reload -= dt;
+      if (gi.reload <= 0) { gi.reload = 0; gi.ammo = g.mag; }
+      continue;
+    }
+    if (p.cd > 0) continue;
+    let tgt = null;
+    for (const z of S.zombies) {
+      if (z.state === 'die' || z.x > CONFIG.canvas.width || Math.abs(z.x - p.x) > g.range) continue;   // ยิงได้ทั้งข้างหน้าและข้างหลัง (ซอมบี้ที่หลุดเข้าฐาน)   // จำกัดระยะยิงตามระดับปืน
+      if (!tgt || z.x < tgt.x) tgt = z;
+    }
+    if (tgt) {
+      fire(p, g, gi.tier, tgt);
+      if (--gi.ammo <= 0) { gi.reload = g.reload; Sound.play('reload'); }
+    }
+  }
+}
+function fire(p, g, tier, z) {
+  p.cd = 1 / g.rate; p.recoil = 1; p.attackT = .15; Sound.play('shoot', g.snd);
+  p.dir = z.x < p.x ? -1 : 1;                     // หันไปยิงซอมบี้ที่หลุดเข้ามาด้านหลัง (ที่ฐาน) ได้
+  const mx = p.x + 18 * p.dir, my = p.y - 36;
+  let ex = z.x, ey = z.y - z.h * .55;
+  if (g.pellets) {                                // ลูกซอง: หลายเม็ด ยิ่งไกลยิ่งโดนน้อย ดาเมจรวม = เม็ดที่โดน × ดาเมจเม็ด
+    const acc = clamp(1 - Math.abs(z.x - p.x) / g.range * .75, .25, 1);
+    const cone = S.zombies.filter(o => o.state !== 'die' && Math.abs(o.x - z.x) < 46 && Math.abs(o.y - z.y) < 34);
+    for (let i = 0; i < g.pellets; i++) {
+      const o = cone[(Math.random() * cone.length) | 0] || z, hit = Math.random() < acc;
+      const tx = hit ? o.x : o.x + rand(-26, 26), ty = o.y - o.h * .55 + (hit ? 0 : rand(-18, 18));
+      if (hit) hitZombie(o, g.dmg);
+      S.tracers.push({ x1: mx, y1: my, x2: tx, y2: ty, life: .07, color: g.color, w: g.tw });
+    }
+    burst(ex, ey, '#ffe27a', g.fx, .8);
+    return;
+  }
+  hitZombie(z, g.dmg);
+  if (g.special === 'pierce' && S.upg.pierce) {
+    const U = CONFIG.upgrades.pierce; let left = U.count - 1, dmg = g.dmg;
+    const line = S.zombies.filter(o => o !== z && o.state !== 'die' && o.x > z.x && o.x < CONFIG.canvas.width && o.x - p.x <= g.range && Math.abs(o.y - z.y) < U.laneTol).sort((a, b) => a.x - b.x);
+    for (const o of line) {
+      if (left-- <= 0) break;
+      dmg *= U.falloff; hitZombie(o, dmg); ex = o.x; ey = o.y - o.h * .55;
+    }
+  }
+  if (g.special === 'explode' && S.upg.explode) {
+    const U = CONFIG.upgrades.explode;
+    S.rings.push({ x: z.x, y: z.y - 6, r: 0, max: U.radius, life: .35, max2: .35 });
+    for (const o of S.zombies) {
+      if (o === z || o.state === 'die') continue;
+      if (Math.hypot(o.x - z.x, (o.y - z.y) * 1.6) <= U.radius) hitZombie(o, g.dmg * U.splash);
+    }
+  }
+  if (g.splash) {                                 // RPG: ระเบิดเป็นวงเสมอ (ไม่ต้องซื้ออัปเกรด)
+    S.rings.push({ x: z.x, y: z.y - 6, r: 0, max: g.splash.radius, life: .4, max2: .4 }); S.shake = Math.max(S.shake, .25);
+    for (const o of S.zombies) {
+      if (o === z || o.state === 'die') continue;
+      if (Math.hypot(o.x - z.x, (o.y - z.y) * 1.6) <= g.splash.radius) hitZombie(o, g.dmg * g.splash.ratio);
+    }
+  }
+  burst(ex, ey, '#ffe27a', g.fx, .7);
+  S.tracers.push({ x1: mx, y1: my, x2: ex, y2: ey, life: g.snd === 3 ? .14 : .09, color: g.color, w: g.tw });
+}
+
+/* ---- ตัวละครพิเศษ: AI ต่อสู้ / ซ่อม / ล่อซอมบี้ ---- */
+const THREAT = { boss: 100, armored: 60, spitter: 55, screamer: 55, exploder: 50, infected: 40, runner: 20, normal: 10 };
+function moveUnit(u, tx, ty, dt) {
+  const K = CONFIG.specials[u.cls], dx = tx - u.x, dy = ty - u.y, d = Math.hypot(dx, dy);
+  if (d < 2) return;
+  const st = Math.min(d, K.speed * dt); u.x += dx / d * st; u.y += dy / d * st; u.moving = true; if (Math.abs(dx) > 1) u.dir = dx > 0 ? 1 : -1;
+}
+function specialShoot(u, K, z) {
+  const A = K.atk, sn = K.type === 'sniper';
+  u.cd = A.interval; u.recoil = 1; u.attackT = .15; u.dir = z.x < u.x ? -1 : 1; Sound.play('shoot', sn ? 3 : 1);
+  const ex = z.x, ey = z.y - z.h * .55;
+  hitZombie(z, A.dmg * u.dmgMul); burst(ex, ey, '#ffe27a', sn ? 7 : 3, .7);
+  S.tracers.push({ x1: u.x + 18 * u.dir, y1: u.y - 36, x2: ex, y2: ey, life: sn ? .16 : .09, color: K.color, w: sn ? 2.5 : 1.5 });
+  if (--u.ammo <= 0) { u.reload = A.reload; Sound.play('reload'); }
+}
+function pickTarget(u, K, alive) {
+  let tgt = null, best = -1e9;
+  for (const z of alive) {
+    if (Math.abs(z.x - u.x) > K.atk.range) continue;      // ยิงได้ทั้งข้างหน้า/ข้างหลัง
+    const sc = (K.type === 'sniper' ? (THREAT[z.type] || 10) * 10000 : 0) - z.x;       // ซุ่มยิง: เลือกเป้าอันตรายก่อน, อื่นๆ: ตัวที่ใกล้สุด
+    if (sc > best) { best = sc; tgt = z; }
+  }
+  return tgt;
+}
+function medicJob(u, R) {
+  const W = CONFIG.world; let hurt = null;
+  for (const o of liveUnits()) if (o !== u && o.hp < o.maxHp * R.healBelow && (!hurt || o.hp / o.maxHp < hurt.hp / hurt.maxHp)) hurt = o;
+  if (hurt) return { kind: 'heal', x: hurt.x, tgt: hurt };
+  const bf = S.barHp / barMaxHp(), sf = S.baseHp / CONFIG.base.maxHp, needBar = S.barHp > 0 && bf < 1, needBase = sf < 1;
+  if (needBar && (!needBase || bf <= sf)) return { kind: 'bar', x: W.barFront };      // ซ่อมสิ่งที่เสียหายหนักกว่าก่อน (ซ่อมบาริเคทที่พังแล้วไม่ได้)
+  if (needBase) return { kind: 'base', x: W.baseFront };
+  return null;
+}
+function lureAbility(u, K, alive) {
+  const B = K.ability, W = CONFIG.world;
+  if (u.abCd > 0 || u.charges <= 0 || S.grenades.length || S.lures.some(l => l.t > 0)) return;
+  const lx = S.barHp > 0 ? W.barFront + B.landX : W.baseFront + B.landX + 40, ly = (W.groundTop + W.groundBottom) / 2;
+  const n = alive.filter(z => z.type !== 'boss' && z.x > W.barFront + 10 && Math.abs(z.x - lx) < B.radius + 120).length;
+  if (n < B.minZombies) return;
+  S.grenades.push({ x0: u.x + 10, y0: u.y - 40, x: u.x, y: u.y - 40, tx: lx, ty: ly, t: 0, dur: .65, B });
+  u.charges--; u.abCd = B.cd; u.attackT = .3; u.dir = 1; addFloat(u.x, u.y - 70, '🎯', '#7fffd4'); Sound.play('lure');
+}
+function updateSpecials(dt) {
+  const W = CONFIG.world, CWd = CONFIG.canvas.width;
+  for (const u of S.specials) {
+    if (u.dead) { u.dieT += dt; continue; }
+    const K = CONFIG.specials[u.cls], A = K.atk;
+    u.t += dt; u.hurt = Math.max(0, u.hurt - dt); u.cd = Math.max(0, u.cd - dt); u.abCd = Math.max(0, u.abCd - dt); u.rep = Math.max(0, u.rep - dt);
+    u.recoil = Math.max(0, u.recoil - dt * 8); u.attackT = Math.max(0, u.attackT - dt); u.moving = false; u.work = null;
+    if (u.reload > 0) { u.reload -= dt; if (u.reload <= 0) { u.reload = 0; u.ammo = A.mag; } }
+    const alive = S.zombies.filter(z => z.state !== 'die' && z.x < CWd);
+    if (K.type === 'melee') {
+      const maxX = S.barHp > 0 ? W.barFront - 12 : 560;
+      let tgt = null, best = 1e9;
+      for (const z of alive) {
+        if (z.x > maxX + A.range + 30) continue;
+        const d = Math.abs(z.x - u.x) + Math.abs(z.y - u.y) * .5; if (d < best) { best = d; tgt = z; }
+      }
+      if (tgt) {
+        if (Math.abs(tgt.x - u.x) <= A.range && Math.abs(tgt.y - u.y) < 40) {
+          u.dir = tgt.x < u.x ? -1 : 1;
+          if (u.cd <= 0) { u.cd = A.interval; u.attackT = .2; hitZombie(tgt, A.dmg * u.dmgMul); burst(tgt.x, tgt.y - tgt.h * .5, '#ffd9a0', 4, .7); Sound.play('thud'); }
+        } else moveUnit(u, clamp(tgt.x - A.range * .6, W.baseFront + 10, maxX), tgt.y, dt);
+      } else moveUnit(u, u.hx, u.hy, dt);
+    } else if (K.type === 'support') {
+      const R = K.repair, threat = alive.find(z => Math.abs(z.x - u.x) < R.threat && Math.abs(z.y - u.y) < 60);
+      const job = threat ? null : medicJob(u, R);
+      if (job) {
+        if (Math.abs(u.x - job.x) > R.range) moveUnit(u, job.x + (u.x > job.x ? R.range * .6 : -R.range * .6), u.hy, dt);
+        else {
+          u.work = job.kind === 'heal' ? 'heal' : 'repair';
+          if (u.rep <= 0) {
+            u.rep = R.interval; u.attackT = .25;
+            if (job.kind === 'heal') {
+              const a = Math.min(R.heal, job.tgt.maxHp - job.tgt.hp);
+              if (a > 0 && !job.tgt.dead) { job.tgt.hp += a; addFloat(job.tgt.x, job.tgt.y - 64, '+' + Math.round(a), '#4fd16f'); burst(job.tgt.x, job.tgt.y - 30, '#4fd16f', 4, .5); }
+            } else {
+              const bar = job.kind === 'bar', cur = bar ? S.barHp : S.baseHp, max = bar ? barMaxHp() : CONFIG.base.maxHp;
+              const a = Math.min(R.hp, max - cur), cost = a * R.costPerHp;                  // ไม่ซ่อมเกินเลือดสูงสุด
+              if (a > 0 && S.money >= cost) {
+                S.money -= cost; if (bar) S.barHp += a; else S.baseHp += a;
+                addFloat(bar ? W.barFront - 20 : W.baseFront - 20, W.groundTop - 40, '+' + Math.round(a) + ' 🔧', '#7fe0b0'); burst(bar ? W.barFront - 14 : W.baseFront - 10, W.groundTop + 20, '#7fe0b0', 3, .5);
+              }
             }
-        ];
-
-        // 2. เรนเดอร์รายการหน้าแรก
-        function renderHeists() {
-            const container = document.getElementById('heist-list');
-            
-            realHeists.forEach((heist, index) => {
-                const card = document.createElement('div');
-                card.className = 'event-card';
-                
-                card.innerHTML = `
-                    <div class="card-img-container">
-                        <img src="${heist.image}" alt="${heist.title}" class="card-img">
-                    </div>
-                    <div class="card-content">
-                        <div class="date">📅 ${heist.date} | 📍 ${heist.location}</div>
-                        <h2 class="title">${heist.title}</h2>
-                        <p class="short-desc">${heist.shortDesc}</p>
-                        <button class="btn" onclick="openModal(${index})">🔍 เปิดแฟ้มคดีเพื่อดูรายละเอียด</button>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
+          }
         }
+      } else {
+        const tgt = u.reload <= 0 && u.cd <= 0 ? pickTarget(u, K, alive) : null;
+        if (tgt) specialShoot(u, K, tgt); else moveUnit(u, u.hx, u.hy, dt);
+      }
+    } else {                                      // ranged / sniper / lure
+      if (K.type === 'lure') lureAbility(u, K, alive);
+      if (u.reload <= 0 && u.cd <= 0) { const tgt = pickTarget(u, K, alive); if (tgt) specialShoot(u, K, tgt); }
+      moveUnit(u, u.hx, u.hy, dt);
+    }
+  }
+}
 
-        // 3. ฟังก์ชันเปิด Modal นำข้อมูลแบบละเอียดมาแสดง
-        function openModal(index) {
-            const data = realHeists[index];
-            document.getElementById('modalImg').src = data.image;
-            document.getElementById('modalDate').innerHTML = `📅 ${data.date} | 📍 ${data.location}`;
-            document.getElementById('modalTitle').innerText = data.title;
-            document.getElementById('modalValue').innerText = `💰 ${data.estimatedValue}`;
-            document.getElementById('modalFullDesc').innerHTML = data.fullDesc;
-            document.getElementById('modalSource').href = data.sourceUrl;
-            
-            document.getElementById('caseModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // ป้องกันไม่ให้หน้าหลักเลื่อนขณะเปิด Modal
+/* ---- ชาวบ้าน ---- */
+function updateVillagers(dt) {
+  const want = Math.min(S.villagers, S.villMax), W = CONFIG.world;
+  while (S.vills.length < want) S.vills.push(newVill());
+  while (S.vills.length > want) S.vills.pop();
+  for (const v of S.vills) {
+    v.t += dt;
+    if (v.wait > 0) { v.wait -= dt; v.moving = false; continue; }
+    const dx = v.tx - v.x, dy = v.ty - v.y, d = Math.hypot(dx, dy);
+    if (d < 3) { v.wait = rand(1, 3.5); v.tx = rand(25, 150); v.ty = rand(W.groundTop + 14, W.groundBottom); v.moving = false; }
+    else { v.x += dx / d * 28 * dt; v.y += dy / d * 28 * dt; v.dir = dx >= 0 ? 1 : -1; v.moving = true; }
+  }
+}
+
+/* ---- เอฟเฟกต์ ---- */
+function addFloat(x, y, text, color) { S.floats.push({ x, y, text, color, life: 1.1 }); }
+function updateEffects(dt) {
+  for (const tr of S.tracers) tr.life -= dt;
+  S.tracers = S.tracers.filter(tr => tr.life > 0);
+  for (const r of S.rings) { r.life -= dt; r.r = r.max * (1 - r.life / r.max2); }
+  S.rings = S.rings.filter(r => r.life > 0);
+  for (const f of S.floats) { f.life -= dt; f.y -= 28 * dt; }
+  S.floats = S.floats.filter(f => f.life > 0);
+  for (const q of S.spits) {
+    q.t += dt; const f = Math.min(1, q.t / q.dur); q.x = q.x0 + (q.tx - q.x0) * f; q.y = q.y0 + (q.ty - q.y0) * f - Math.sin(f * 3.14) * 40;
+    if (f >= 1 && !q.done) { q.done = true; if (q.pol && !q.pol.dead) hurtPolice(q.pol, q.dmg); else if (S.barHp > 0) { S.barHp = Math.max(0, S.barHp - q.dmg); S.barHit = .12; } else { S.baseHp -= q.dmg; S.baseHit = .12; } burst(q.tx, q.ty, '#55e08a', 5); }
+  }
+  S.spits = S.spits.filter(q => !q.done);
+  for (const g of S.grenades) {
+    g.t += dt; const f = Math.min(1, g.t / g.dur); g.x = g.x0 + (g.tx - g.x0) * f; g.y = g.y0 + (g.ty - g.y0) * f - Math.sin(f * 3.14) * 70;
+    if (f >= 1 && !g.done) { g.done = true; S.lures.push({ x: g.tx, y: g.ty, r: g.B.radius, t: g.B.dur, max: g.B.dur }); burst(g.tx, g.ty - 6, '#7fffd4', 14); S.rings.push({ x: g.tx, y: g.ty, r: 0, max: g.B.radius, life: .5, max2: .5 }); Sound.play('lure'); }
+  }
+  S.grenades = S.grenades.filter(g => !g.done);
+  for (const l of S.lures) l.t -= dt;
+  S.lures = S.lures.filter(l => l.t > 0);
+  if (S.parts) { for (const p of S.parts) { p.life -= dt; p.vy += 320 * dt; p.x += p.vx * dt; p.y += p.vy * dt; } S.parts = S.parts.filter(p => p.life > 0); }
+  S.shake = Math.max(0, S.shake - dt * 1.5);
+  S.barHit = Math.max(0, S.barHit - dt); S.baseHit = Math.max(0, S.baseHit - dt);
+  if (S.banner) { S.banner.t -= dt; if (S.banner.t <= 0) S.banner = null; }
+}
+
+/* ========================= 5) RENDER ========================= */
+const cv = $('game'), mainCtx = cv.getContext('2d');
+let c = mainCtx;                 // ตัวแปรวาดหลัก (สลับชั่วคราวตอนวาดภาพตัวละครในร้านค้า)
+cv.width = CONFIG.canvas.width; cv.height = CONFIG.canvas.height;
+const CW = cv.width, CH = cv.height;
+let bgCache = null;
+
+let bgWins = [];
+function makeBg() {
+  const P = 4, w = CW / P, h = CH / P, sm = document.createElement('canvas'); sm.width = w; sm.height = h;
+  const g = sm.getContext('2d'), W = CONFIG.world, hor = Math.round((W.groundTop - 16) / P);
+  let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const bands = ['#0f1426', '#151c36', '#1c2547', '#2a2c58', '#40335f', '#5d3b61', '#84485a', '#a85c55'], bh = hor / bands.length;
+  bands.forEach((col, i) => { g.fillStyle = col; g.fillRect(0, Math.floor(i * bh), w, Math.ceil(bh) + 1); });
+  for (let i = 0; i < 45; i++) { g.fillStyle = rnd() > .5 ? '#cfd6ff' : '#7a86c8'; g.fillRect(rnd() * w | 0, rnd() * hor * .5 | 0, 1, 1); }
+  g.fillStyle = '#f2e7bd'; g.fillRect(228, 14, 10, 10); g.fillStyle = '#d6c88f'; g.fillRect(232, 17, 3, 3);
+  bgWins = [];
+  for (let layer = 0; layer < 2; layer++) {
+    let x = -3;
+    while (x < w) {
+      const bw = 12 + rnd() * 18 | 0, bt = ((18 + rnd() * 40) * (layer ? 1 : .75)) | 0;
+      g.fillStyle = layer ? '#222a42' : '#161b30'; g.fillRect(x, hor - bt, bw, bt);
+      g.fillStyle = layer ? '#2c3552' : '#1c223a'; g.fillRect(x, hor - bt, bw, 1);
+      for (let wy = hor - bt + 4; wy < hor - 5; wy += 5)
+        for (let wx = x + 2; wx < x + bw - 3; wx += 4) {
+          const lit = rnd() > .72; g.fillStyle = lit ? '#ffb347' : (layer ? '#171c30' : '#12162a'); g.fillRect(wx, wy, 2, 3);
+          if (lit && layer) bgWins.push([wx * P, wy * P, rnd() * 6.28]);
         }
+      x += bw + (rnd() * 3 | 0);
+    }
+  }
+  g.fillStyle = '#3a3c52'; g.fillRect(0, hor, w, h - hor);
+  g.fillStyle = '#4a4d66'; g.fillRect(0, hor, w, 2);
+  g.fillStyle = '#2d2f42'; g.fillRect(0, Math.round((W.groundBottom + 12) / P), w, h);
+  g.fillStyle = '#7c7f96'; for (let x = 3; x < w; x += 17) g.fillRect(x, Math.round(442 / P), 9, 1);
+  g.fillStyle = '#2a2c3d'; for (let i = 0; i < 50; i++) g.fillRect(rnd() * w | 0, (hor + 3 + rnd() * (h - hor - 3)) | 0, 2 + rnd() * 3 | 0, 1);
+  const k = document.createElement('canvas'); k.width = CW; k.height = CH;
+  const kg = k.getContext('2d'); kg.imageSmoothingEnabled = false; kg.drawImage(sm, 0, 0, CW, CH);
+  return k;
+}
+function drawAmbient() {
+  const T = performance.now() / 1000, L = CW + 320;
+  c.fillStyle = 'rgba(150,130,190,.2)';
+  for (let i = 0; i < 4; i++) {
+    const x = Math.round((((i * 331 - T * (5 + i * 2)) % L + L) % L - 160) / 4) * 4, y = 24 + i * 22;
+    c.fillRect(x, y, 120, 8); c.fillRect(x + 16, y - 8, 72, 8); c.fillRect(x + 40, y + 8, 80, 8);
+  }
+  for (const [x, y, p] of bgWins) { c.fillStyle = 'rgba(255,179,71,' + (.12 + .1 * Math.sin(T * 3 + p)).toFixed(2) + ')'; c.fillRect(x - 4, y - 4, 16, 20); }
+}
+function drawLight() {
+  const T = performance.now() / 1000, W = CONFIG.world;
+  const torch = (x, y, ph) => {
+    const f = .75 + .25 * Math.sin(T * 11 + ph) * Math.sin(T * 7.3 + ph), fl = Math.round(f * 6);
+    c.fillStyle = '#5a3a22'; c.fillRect(x - 2, y, 4, 18);
+    c.fillStyle = '#ff7a1a'; c.fillRect(x - 4, y - 8 - fl, 8, 8 + fl); c.fillStyle = '#ffd54a'; c.fillRect(x - 2, y - 6 - fl, 4, 6);
+    c.save(); c.globalCompositeOperation = 'lighter';
+    const gr = c.createRadialGradient(x, y, 2, x, y, 95 * f); gr.addColorStop(0, 'rgba(255,150,40,.34)'); gr.addColorStop(1, 'rgba(255,100,20,0)');
+    c.fillStyle = gr; c.fillRect(x - 100, y - 100, 200, 200); c.restore();
+  };
+  torch(W.baseX + 70, W.baseY - 56, 0); torch(W.barFront + 8, W.groundTop - 30, 2);
+  const v = c.createRadialGradient(CW / 2, CH / 2, CH * .45, CW / 2, CH / 2, CW * .65);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(5,6,20,.45)'); c.fillStyle = v; c.fillRect(0, 0, CW, CH);
+  if (S.baseHit > 0) { c.fillStyle = 'rgba(255,30,20,.16)'; c.fillRect(0, 0, CW, CH); }
+  if (S.baseHp / CONFIG.base.maxHp < .3 && !S.over) { c.strokeStyle = 'rgba(255,40,30,' + (.25 + .2 * Math.sin(T * 6)).toFixed(2) + ')'; c.lineWidth = 10; c.strokeRect(0, 0, CW, CH); }
+}
+function burst(x, y, col, n, sp) { const a = S.parts || (S.parts = []); for (let i = 0; i < n; i++) a.push({ x, y, vx: rand(-60, 60) * (sp || 1), vy: rand(-110, -20), life: rand(.25, .5), col }); }
 
-        // 4. ฟังก์ชันปิด Modal
-        function closeModal() {
-            document.getElementById('caseModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // คืนค่าให้หน้าหลักเลื่อนได้
+function humanoid(x, y, w, h, o) {
+  const tt = o.t || 0, mv = o.moving ? 1 : 0, dir = o.dir || 1, F = v => o.flash ? '#fff' : v;
+  const swing = Math.sin(tt * (mv ? 9 : 2)) * (mv ? .5 : .05);
+  const bob = mv ? Math.abs(Math.sin(tt * 9)) * 2 : Math.sin(tt * 2.5) * .8;
+  const legH = h * .32, bodyH = h * .36, headR = h * .15, shY = -legH - bodyH + h * .05, headY = -legH - bodyH - headR * .8;
+  c.save(); c.translate(Math.round(x), Math.round(y - bob)); c.globalAlpha = o.alpha == null ? 1 : o.alpha;
+  if (o.rot) c.rotate(-dir * o.rot);
+  c.scale(dir, 1);
+  c.fillStyle = F(o.pants);
+  c.fillRect(-w * .3 + swing * w * .3, -legH, w * .24, legH);
+  c.fillRect(w * .06 - swing * w * .3, -legH, w * .24, legH);
+  c.fillStyle = F(o.shirt); c.fillRect(-w * .32, -legH - bodyH, w * .64, bodyH);
+  if (o.armsOut) {
+    const armL = w * (o.armLen || .6), a = o.attack ? Math.sin(tt * 14) * .45 : Math.sin(tt * 3) * .08;
+    for (const off of [-2, 4]) {
+      c.save(); c.translate(0, shY + off); c.rotate(-.15 + a); c.fillStyle = F(o.skin); c.fillRect(0, -3, armL, Math.max(5, w * .15)); c.restore();
+    }
+  } else {
+    c.fillStyle = F(o.shirt); c.fillRect(-w * .44, shY, w * .13, bodyH * .8); c.fillRect(w * .31, shY, w * .13, bodyH * .8);
+  }
+  c.fillStyle = F(o.skin); c.beginPath(); c.arc(0, headY, headR, 0, 6.2832); c.fill();
+  if (o.extra) o.extra({ w, h, legH, bodyH, headR, shY, headY, t: tt });
+  c.restore();
+}
+
+function drawVillager(v) {
+  const sc = SPRITE_CONFIG.villager;
+  if (Assets.draw(c, 'villager', v.moving ? 'walk' : 'idle', v.t, v.x, v.y, { dir: v.dir })) return;
+  humanoid(v.x, v.y, sc.w, sc.h, {
+    skin: '#e8c39e', shirt: '#5fae5a', pants: '#6b5a3a', dir: v.dir, t: v.t, moving: v.moving,
+    extra: g => { c.fillStyle = '#d9b84a'; c.beginPath(); c.ellipse(0, g.headY - g.headR * .6, g.headR * 1.6, g.headR * .45, 0, 0, 6.3); c.fill(); c.fillRect(-g.headR * .7, g.headY - g.headR * 1.4, g.headR * 1.4, g.headR * .8); }
+  });
+}
+function drawPolice(p) {
+  const sc = SPRITE_CONFIG.police, st = p.attackT > 0 ? 'attack' : 'idle', gi = policeGun(p), tier = gi ? gi.tier : -1;
+  if (!Assets.draw(c, 'police', st, p.t, p.x, p.y, { dir: p.dir || 1 })) {
+    const gcol = tier >= 0 ? CONFIG.guns[tier].color : '#555', glen = tier >= 0 ? CONFIG.guns[tier].len : 10;
+    humanoid(p.x, p.y, sc.w, sc.h, {
+      skin: '#e0b48a', shirt: '#233f7a', pants: '#18233f', dir: p.dir || 1, t: p.t, rot: p.dead ? Math.min(1.45, p.dieT * 3) : 0, alpha: p.dead ? Math.max(0, 1 - (p.dieT - .6) / .6) : 1, flash: p.hurt > 0,
+      extra: g => {
+        c.fillStyle = '#10204a'; c.fillRect(-g.headR * 1.05, g.headY - g.headR * 1.25, g.headR * 2.1, g.headR * .9); c.fillRect(0, g.headY - g.headR * .5, g.headR * 1.6, 3);
+        c.fillStyle = '#ffd54a'; c.fillRect(-g.w * .22, g.shY + 6, 4, 4);
+        if (tier >= 0) {
+          const rec = p.recoil * 3, th = tier >= 0 ? CONFIG.guns[tier].th : 5;
+          c.fillStyle = '#222'; c.fillRect(4 - rec, g.shY + 2, glen, th);
+          c.fillStyle = gcol; c.fillRect(4 - rec, g.shY + 2, glen * .6, th - 2);
+          if (p.attackT > .08) { c.fillStyle = '#fff3a0'; c.beginPath(); c.arc(4 + glen - rec + 3, g.shY + 4, 5, 0, 6.3); c.fill(); }
         }
+      }
+    });
+  }
+  if (!p.dead && p.hp < p.maxHp) hpBar(p.x - 12, p.y - sc.h - 14, 24, 3, p.hp / p.maxHp, '#4fd16f');
+  if (gi) {
+    const g = S.gcfg[gi.tier], bx = p.x - 12, by = p.y - sc.h - 8;
+    c.fillStyle = 'rgba(0,0,0,.7)'; c.fillRect(bx - 1, by - 1, 26, 5);
+    if (gi.reload > 0) { c.fillStyle = '#ff9a2a'; c.fillRect(bx, by, 24 * (1 - gi.reload / g.reload), 3); }
+    else { c.fillStyle = g.color; c.fillRect(bx, by, 24 * (gi.ammo / g.mag), 3); }
+  } else if (!p.dead) {
+    c.fillStyle = '#ff5a4d'; c.font = 'bold 12px ' + FONT; c.textAlign = 'center'; c.fillText('!', p.x, p.y - sc.h - 4);
+  }
+}
+function drawZombie(z) {
+  const die = z.state === 'die', prog = die ? Math.min(1, z.dieT / z.dieDur) : 0;
+  const sheetDie = Assets.hasAnim(z.key, 'die');
+  const o = { dir: z.faceR ? 1 : -1, w: z.w, h: z.h, alpha: die ? 1 - Math.max(0, (prog - .6) / .4) : 1, rot: die && !sheetDie ? prog * 1.45 : 0 };
+  if (z.type === 'boss' && z.enraged && !die) {
+    const gr = c.createRadialGradient(z.x, z.y - z.h / 2, 10, z.x, z.y - z.h / 2, z.h * .8);
+    gr.addColorStop(0, 'rgba(255,40,30,.35)'); gr.addColorStop(1, 'rgba(255,40,30,0)');
+    c.fillStyle = gr; c.fillRect(z.x - z.h, z.y - z.h * 1.3, z.h * 2, z.h * 1.5);
+  }
+  if (Assets.draw(c, z.key, z.state, z.t, z.x, z.y, o)) return;
+  const pal = CONFIG.zombies[z.type].pal || z.type === 'boss' ? { skin: '#c97b6a', shirt: '#5a3a2a', pants: '#3a2a22' }
+            : z.type === 'infected' ? { skin: '#8fbf3a', shirt: '#5b2d6e', pants: '#2b1a38' }
+            : { skin: '#7fae6a', shirt: '#6a7a8a', pants: '#3d3a4a' };
+  humanoid(z.x, z.y, z.w, z.h, Object.assign({
+    dir: z.faceR ? 1 : -1, t: z.t, moving: z.state === 'walk', armsOut: true, attack: z.state === 'attack', flash: z.flash > 0, alpha: o.alpha, rot: o.rot,
+    armLen: z.type === 'boss' ? .55 : .6,
+    extra: g => {
+      c.fillStyle = z.enraged ? '#ff2a1a' : '#ff3b30'; c.fillRect(g.headR * .3, g.headY - 2, 3, 3); c.fillRect(g.headR * .3, g.headY + 3, 3, 2);
+      if (z.type === 'infected') {
+        c.fillStyle = '#c6f23a';
+        for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(-g.w * .32, g.shY + i * 9); c.lineTo(-g.w * .6, g.shY + i * 9 + 4); c.lineTo(-g.w * .32, g.shY + i * 9 + 8); c.fill(); }
+        c.fillStyle = 'rgba(190,255,60,.35)'; c.beginPath(); c.arc(0, g.headY, g.headR * 1.5, 0, 6.3); c.fill();
+      }
+      if (z.type === 'boss') {
+        c.strokeStyle = '#6b4a2a'; c.lineWidth = 6; c.beginPath(); c.moveTo(g.w * .1, g.shY - 30); c.lineTo(g.w * .55, g.shY - 76); c.stroke();
+        c.fillStyle = '#b8bcc4'; c.beginPath(); c.moveTo(g.w * .5, g.shY - 90); c.lineTo(g.w * .85, g.shY - 70); c.lineTo(g.w * .55, g.shY - 50); c.fill();
+        c.fillStyle = '#e6c84a'; c.beginPath(); c.moveTo(-g.headR, g.headY - g.headR * .6); c.lineTo(-g.headR * 1.4, g.headY - g.headR * 2.2); c.lineTo(-g.headR * .3, g.headY - g.headR * 1.1); c.fill();
+      }
+    }
+  }, pal));
+}
 
-        // 5. ปิด Modal เมื่อคลิกพื้นที่ว่างข้างนอกกล่อง
-        window.onclick = function(event) {
-            const modal = document.getElementById('caseModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
+/* ---- วาดตัวละครพิเศษ (ใช้ร่วมกันทั้งในเกมและภาพพอร์ตเทรตในร้านค้า) ---- */
+const SP_PAL = {
+  fighter:   { skin: '#e0b48a', shirt: '#a8442c', pants: '#3a2a22' },
+  rifleman:  { skin: '#e0b48a', shirt: '#4a6a3a', pants: '#2f3a24' },
+  sniper:    { skin: '#e0b48a', shirt: '#5a5040', pants: '#3a3428' },
+  medic:     { skin: '#e0b48a', shirt: '#e8ecf2', pants: '#3a5a8a' },
+  grenadier: { skin: '#e0b48a', shirt: '#c0612a', pants: '#3a2a4a' },
+  heavy:     { skin: '#d9ad86', shirt: '#6a7a90', pants: '#3a4458' }
+};
+function spRifle(g, o, len, col) {
+  const rec = (o.recoil || 0) * 3;
+  c.fillStyle = '#222'; c.fillRect(4 - rec, g.shY + 2, len, 5); c.fillStyle = col; c.fillRect(4 - rec, g.shY + 2, len * .6, 3);
+  if ((o.attackT || 0) > .08) { c.fillStyle = '#fff3a0'; c.beginPath(); c.arc(4 + len - rec + 3, g.shY + 4, 5, 0, 6.3); c.fill(); }
+}
+const SP_EQUIP = {
+  fighter(g, o) {
+    c.fillStyle = '#c0392b'; c.fillRect(-g.headR * 1.05, g.headY - g.headR * .5, g.headR * 2.1, 3);
+    c.save(); c.translate(g.w * .3, g.shY + 4); c.rotate((o.attackT || 0) > 0 ? -1.4 + (1 - o.attackT / .2) * 2.6 : -.7);
+    c.fillStyle = '#6b4a2a'; c.fillRect(0, -2, 26, 4); c.fillStyle = '#8a6a3a'; c.fillRect(16, -3, 10, 6); c.restore();
+  },
+  rifleman(g, o) { c.fillStyle = '#3f5a2a'; c.fillRect(-g.headR * 1.1, g.headY - g.headR * 1.25, g.headR * 2.2, g.headR * .95); spRifle(g, o, 22, '#8a7a4a'); },
+  sniper(g, o) {
+    c.fillStyle = '#5a4a2a'; c.beginPath(); c.ellipse(0, g.headY - g.headR * .6, g.headR * 1.7, g.headR * .5, 0, 0, 6.3); c.fill(); c.fillRect(-g.headR * .8, g.headY - g.headR * 1.5, g.headR * 1.6, g.headR * .9);
+    spRifle(g, o, 34, '#444'); c.fillStyle = '#7fd0ff'; c.fillRect(11, g.shY - 1, 7, 3);
+  },
+  medic(g, o) {
+    c.fillStyle = '#e8ecf2'; c.fillRect(-g.headR * 1.05, g.headY - g.headR * 1.2, g.headR * 2.1, g.headR * .8);
+    c.fillStyle = '#d9342b'; c.fillRect(-1.5, g.headY - g.headR * 1.15, 3, 6); c.fillRect(-4, g.headY - g.headR * .75 - 1, 8, 3);
+    c.fillRect(-g.w * .1, g.shY + 6, 4, 12); c.fillRect(-g.w * .1 - 4, g.shY + 10, 12, 4);
+    c.fillStyle = '#b8322a'; c.fillRect(g.w * .12, -g.legH - 6, 12, 9);
+    if (o.work) { c.fillStyle = '#ffd54a'; const k = Math.sin((o.t || 0) * 18) > 0; c.fillRect(g.w * .4 + (k ? 3 : 0), g.shY + 2, 4, 4); c.fillStyle = '#9aa7b8'; c.fillRect(g.w * .3, g.shY + 4, 14, 3); }
+  },
+  grenadier(g, o) {
+    c.fillStyle = '#e07a2a'; c.fillRect(-g.headR * 1.05, g.headY - g.headR * 1.2, g.headR * 2.1, g.headR * .8);
+    c.fillStyle = '#5ff0c0'; for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(-g.w * .22 + i * 7, -g.legH - 3, 3, 0, 6.3); c.fill(); }
+    const rec = (o.recoil || 0) * 3; c.fillStyle = '#2a2a2a'; c.fillRect(4 - rec, g.shY + 1, 16, 7); c.fillStyle = '#5ff0c0'; c.fillRect(16 - rec, g.shY + 2, 4, 5);
+    if ((o.attackT || 0) > .1) { c.fillStyle = '#b8ffe8'; c.beginPath(); c.arc(24 - rec, g.shY + 4, 5, 0, 6.3); c.fill(); }
+  },
+  heavy(g, o) {
+    c.fillStyle = '#4a5568'; c.fillRect(-g.headR * 1.15, g.headY - g.headR * 1.3, g.headR * 2.3, g.headR * 1.1);
+    c.fillStyle = '#8a98ad'; c.fillRect(g.w * .26, g.shY - 8, 11, g.bodyH + 18); c.fillStyle = '#c4cfdd'; c.fillRect(g.w * .26, g.shY - 8, 3, g.bodyH + 18);
+    c.fillStyle = '#ffd54a'; c.fillRect(g.w * .26 + 5, g.shY + 4, 3, 8);
+    if ((o.attackT || 0) > 0) { c.fillStyle = '#d0d4da'; c.fillRect(g.w * .26 + 11, g.shY + 6, 10, 4); }
+  }
+};
+function spriteSpecial(cls, x, y, o) {
+  const K = CONFIG.specials[cls], dead = !!o.dead;
+  humanoid(x, y, K.w, K.h, Object.assign({ dir: o.dir || 1, t: o.t || 0, moving: !!o.moving, flash: (o.hurt || 0) > 0,
+    rot: dead ? Math.min(1.45, o.dieT * 3) : 0, alpha: dead ? Math.max(0, 1 - (o.dieT - .6) / .6) : 1,
+    extra: g => SP_EQUIP[cls](g, o) }, SP_PAL[cls]));
+}
+function drawSpecial(u) {
+  const K = CONFIG.specials[u.cls];
+  spriteSpecial(u.cls, u.x, u.y, u);
+  if (u.dead) return;
+  if (u.hp < u.maxHp) hpBar(u.x - 14, u.y - K.h - 14, 28, 3, u.hp / u.maxHp, '#4fd16f');
+  const by = u.y - K.h - 8;
+  c.fillStyle = 'rgba(0,0,0,.7)'; c.fillRect(u.x - 15, by - 1, 30, 5);
+  if (u.reload > 0) { c.fillStyle = '#ff9a2a'; c.fillRect(u.x - 14, by, 28 * (1 - u.reload / K.atk.reload), 3); }
+  else if (K.ability) { c.fillStyle = u.charges > 0 ? (u.abCd > 0 ? '#3a8a74' : '#5ff0c0') : '#555'; c.fillRect(u.x - 14, by, 28 * (u.abCd > 0 ? 1 - u.abCd / K.ability.cd : 1), 3); }
+  else if (K.atk.mag) { c.fillStyle = K.color; c.fillRect(u.x - 14, by, 28 * (u.ammo / K.atk.mag), 3); }
+  else { c.fillStyle = K.color; c.fillRect(u.x - 14, by, 28, 3); }
+  c.font = '11px ' + FONT; c.textAlign = 'center'; c.fillStyle = '#fff';
+  c.fillText(u.work === 'repair' ? '🔧' : u.work === 'heal' ? '➕' : u.reload > 0 ? '⏳' : K.icon, u.x, by - 3);
+}
+function drawPortrait(cvs, cls) {
+  const g = cvs.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cvs.width, cvs.height);
+  const bg = g.createLinearGradient(0, 0, 0, cvs.height); bg.addColorStop(0, '#1c2547'); bg.addColorStop(1, '#3a3c52'); g.fillStyle = bg; g.fillRect(0, 0, cvs.width, cvs.height);
+  g.fillStyle = 'rgba(0,0,0,.35)'; g.beginPath(); g.ellipse(36, 80, 20, 5, 0, 0, 6.3); g.fill();
+  const prev = c; c = g; g.save(); g.scale(1.25, 1.25);
+  try { spriteSpecial(cls, 29, 62, { t: 1, dir: 1 }); } finally { g.restore(); c = prev; }
+}
 
-        // เริ่มต้นทำงาน
-        window.onload = renderHeists;
-    </script>
+function drawBase() {
+  const W = CONFIG.world, sc = SPRITE_CONFIG.base, x = W.baseX, y = W.baseY;
+  if (!Assets.draw(c, 'base', 'idle', S.time, x, y, {})) {
+    c.fillStyle = '#5b4a3a'; c.fillRect(x - 70, y - 100, 140, 100);
+    c.fillStyle = '#3b2d22'; c.beginPath(); c.moveTo(x - 82, y - 100); c.lineTo(x - 55, y - 130); c.lineTo(x + 55, y - 130); c.lineTo(x + 82, y - 100); c.fill();
+    c.fillStyle = '#2a1e16'; c.fillRect(x - 22, y - 62, 44, 62);
+    c.fillStyle = '#cdb98a'; c.fillRect(x - 40, y - 98, 80, 22);
+    c.fillStyle = '#4a3a22'; c.font = 'bold 15px ' + FONT; c.textAlign = 'center'; c.fillText(t('hud.base'), x, y - 82);
+    const pulse = 8 + Math.sin(S.time * 3) * 3;
+    c.save(); c.shadowColor = '#ff3b3b'; c.shadowBlur = 18; c.fillStyle = '#ff4a4a';
+    c.beginPath(); c.moveTo(x, y - 62 - pulse); c.lineTo(x + 12, y - 40); c.lineTo(x, y - 22); c.lineTo(x - 12, y - 40); c.closePath(); c.fill(); c.restore();
+  }
+  if (S.baseHit > 0) { c.fillStyle = 'rgba(255,0,0,.25)'; c.fillRect(x - 75, y - 135, 150, 135); }
+  hpBar(x - 50, y - sc.h - 12, 100, 8, S.baseHp / CONFIG.base.maxHp, '#e0a030');
+}
 
+function drawBarricade() {
+  const W = CONFIG.world, lw = W.barLayerWidth, hpF = S.barHp / barMaxHp();
+  const top0 = W.groundTop - 34, bottom = W.groundBottom + 8;
+  const cx = W.barFront - lw * CONFIG.barricade.hpPerLevel.length / 2;
+  if (S.barHp <= 0) {
+    c.fillStyle = '#4a3320';
+    for (let i = 0; i < 9; i++) c.fillRect(W.barFront - 20 - (i * 37 % 60), bottom - 6 - (i * 13 % 14), 12 + (i * 7 % 10), 5);
+    return;
+  }
+  const sx = S.barHit > 0 ? rand(-1.5, 1.5) : 0;
+  if (!Assets.draw(c, 'barricade', 'idle', S.time, cx + sx, bottom, { frame: S.barLevel - 1 })) {
+    const colors = ['#7a5233', '#8b6038', '#a89868', '#6b7078', '#4f6a8a'];
+    for (let i = 0; i < S.barLevel; i++) {
+      const x = W.barFront - (i + 1) * lw + sx, top = top0 - i * 4;
+      c.fillStyle = colors[i]; c.fillRect(x, top, lw, bottom - top);
+      c.fillStyle = 'rgba(0,0,0,.25)';
+      for (let y = top + 12; y < bottom; y += 15) c.fillRect(x, y, lw, 2);
+      c.strokeStyle = '#2a1a0e'; c.lineWidth = 1; c.strokeRect(x + .5, top + .5, lw - 1, bottom - top - 1);
+      if (i === 2) { c.fillStyle = '#c9b985'; for (let y = top - 6; y < top + 24; y += 10) { c.beginPath(); c.ellipse(x + lw / 2, y + 5, lw / 2 + 2, 5, 0, 0, 6.3); c.fill(); } }
+      if (i === 3) { c.fillStyle = '#c4c9d0'; for (let y = top + 4; y < bottom - 10; y += 22) { c.beginPath(); c.moveTo(x + lw, y); c.lineTo(x + lw + 9, y + 6); c.lineTo(x + lw, y + 12); c.fill(); } }
+      if (i === 4) { c.fillStyle = '#9fb7d6'; for (let y = top + 8; y < bottom; y += 18) c.fillRect(x + 4, y, 3, 3); }
+    }
+    c.fillStyle = 'rgba(0,0,0,' + ((1 - hpF) * .45).toFixed(2) + ')'; c.fillRect(W.barFront - S.barLevel * lw + sx, top0 - (S.barLevel - 1) * 4, S.barLevel * lw, bottom - top0 + (S.barLevel - 1) * 4);
+    if (hpF < .5) {
+      c.strokeStyle = 'rgba(0,0,0,.6)'; c.lineWidth = 2; c.beginPath();
+      for (let i = 0; i < 4; i++) { const x = W.barFront - 8 - i * 15; c.moveTo(x, top0 + 20 + i * 18); c.lineTo(x + 10, top0 + 40 + i * 18); c.lineTo(x + 2, top0 + 58 + i * 18); }
+      c.stroke();
+    }
+  }
+  hpBar(W.barFront - 60, top0 - S.barLevel * 4 - 14, 70, 7, hpF, '#d94b4b');
+}
+
+function hpBar(x, y, w, h, f, col) {
+  f = clamp(f, 0, 1);
+  c.fillStyle = 'rgba(0,0,0,.7)'; c.fillRect(x - 1, y - 1, w + 2, h + 2);
+  c.fillStyle = col; c.fillRect(x, y, w * f, h);
+}
+
+function render() {
+  c.imageSmoothingEnabled = !CONFIG.pixelArt;
+  $('stage').classList.toggle('hit', S.baseHit > 0);
+  c.save();
+  if (S.shake > 0) c.translate((Math.random() - .5) * S.shake * 14, (Math.random() - .5) * S.shake * 14);
+  if (!Assets.drawBg(c)) c.drawImage(bgCache, 0, 0);
+  drawAmbient();
+  drawBase();
+  drawBarricade();
+  const list = [];
+  for (const v of S.vills) list.push({ y: v.y, x: v.x, w: 30, d: () => drawVillager(v) });
+  for (const p of S.police) if (!p.dead || p.dieT < 1.2) list.push({ y: p.y, x: p.x, w: 30, d: () => drawPolice(p) });
+  for (const u of S.specials) if (!u.dead || u.dieT < 1.2) list.push({ y: u.y, x: u.x, w: 30, d: () => drawSpecial(u) });
+  for (const z of S.zombies) list.push({ y: z.y, x: z.x, w: z.w, die: z.state === 'die', d: () => drawZombie(z), z });
+  list.sort((a, b) => a.y - b.y);
+  for (const it of list) {
+    c.fillStyle = 'rgba(0,0,0,.3)'; c.beginPath(); c.ellipse(it.x, it.y, it.w * .5, 5, 0, 0, 6.3); c.fill();
+    it.d();
+    if (it.z && !it.die && it.z.type !== 'boss') {
+      const z = it.z; zTell(z); hpBar(z.x - 17, z.y - z.h - 10, 34, 4, z.hp / z.maxHp, z.type === 'infected' ? '#c46bff' : '#ff4a3d');
+    }
+  }
+  drawEffects();
+  drawLight();
+  c.restore();
+  drawHud();
+}
+
+function zTell(z) {
+  if (CONFIG.zombies[z.type].range && z.cd < .5 && z.state === 'attack') { c.strokeStyle = '#55e08a'; c.lineWidth = 3; c.beginPath(); c.arc(z.x, z.y - z.h * .6, 8 + z.cd * 20, 0, 6.3); c.stroke(); }
+}
+function drawEffects() {
+  for (const l of S.lures) {
+    const f = l.t / l.max, ph = (S.time * 1.4) % 1;
+    c.globalAlpha = .22 + .1 * Math.sin(S.time * 8); c.fillStyle = '#50ffc8'; c.beginPath(); c.ellipse(l.x, l.y, l.r, l.r * .62, 0, 0, 6.3); c.fill();
+    c.globalAlpha = .85; c.strokeStyle = '#5ff0c0'; c.lineWidth = 2; c.setLineDash([8, 6]); c.beginPath(); c.ellipse(l.x, l.y, l.r, l.r * .62, 0, 0, 6.3); c.stroke(); c.setLineDash([]);
+    c.globalAlpha = (1 - ph) * .7; c.beginPath(); c.ellipse(l.x, l.y, l.r * ph, l.r * ph * .62, 0, 0, 6.3); c.stroke();
+    c.globalAlpha = 1; c.fillStyle = '#2a3a38'; c.fillRect(l.x - 4, l.y - 20, 8, 20); c.fillStyle = Math.sin(S.time * 14) > 0 ? '#5ff0c0' : '#c8fff0'; c.fillRect(l.x - 5, l.y - 26, 10, 7);
+    c.fillStyle = 'rgba(0,0,0,.7)'; c.fillRect(l.x - 21, l.y + 5, 42, 5); c.fillStyle = '#5ff0c0'; c.fillRect(l.x - 20, l.y + 6, 40 * f, 3);
+  }
+  for (const g of S.grenades) { c.globalAlpha = 1; c.fillStyle = '#2a3a38'; c.fillRect(Math.round(g.x) - 4, Math.round(g.y) - 4, 8, 8); c.fillStyle = '#5ff0c0'; c.fillRect(Math.round(g.x) - 2, Math.round(g.y) - 2, 4, 4); }
+  for (const q of S.spits) { c.globalAlpha = 1; c.fillStyle = '#55e08a'; c.fillRect(Math.round(q.x) - 3, Math.round(q.y) - 3, 7, 7); c.fillStyle = '#c8ffd8'; c.fillRect(Math.round(q.x) - 1, Math.round(q.y) - 1, 3, 3); }
+  for (const tr of S.tracers) {
+    c.globalAlpha = clamp(tr.life / .09, 0, 1); c.strokeStyle = tr.color; c.lineWidth = tr.w;
+    c.beginPath(); c.moveTo(tr.x1, tr.y1); c.lineTo(tr.x2, tr.y2); c.stroke();
+  }
+  for (const r of S.rings) {
+    c.globalAlpha = clamp(r.life / r.max2, 0, 1) * .8;
+    c.fillStyle = 'rgba(255,170,40,.35)'; c.strokeStyle = '#ffd36b'; c.lineWidth = 3;
+    c.beginPath(); c.ellipse(r.x, r.y, r.r, r.r * .62, 0, 0, 6.3); c.fill(); c.stroke();
+  }
+  if (S.parts) for (const p of S.parts) { c.globalAlpha = clamp(p.life * 3, 0, 1); c.fillStyle = p.col; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
+  c.globalAlpha = 1; c.textAlign = 'center'; c.font = 'bold 15px ' + FONT;
+  for (const f of S.floats) {
+    c.globalAlpha = clamp(f.life, 0, 1); c.lineWidth = 3; c.strokeStyle = '#000'; c.strokeText(f.text, f.x, f.y);
+    c.fillStyle = f.color; c.fillText(f.text, f.x, f.y);
+  }
+  c.globalAlpha = 1;
+}
+
+function drawHud() {
+  c.textAlign = 'center';
+  const boss = S.zombies.find(z => z.type === 'boss' && z.state !== 'die');
+  if (boss) {
+    const x = CW - 390, y = 16, w = 370;
+    c.font = 'bold 15px ' + FONT; c.textAlign = 'left'; c.fillStyle = '#fff';
+    c.fillText(t('boss.label') + t('z.boss') + (boss.enraged ? t('boss.rage') : ''), x, y + 2);
+    c.fillStyle = 'rgba(0,0,0,.75)'; c.fillRect(x - 2, y + 6, w + 4, 18);
+    c.fillStyle = boss.enraged ? '#ff2a1a' : '#d93b3b'; c.fillRect(x, y + 8, w * clamp(boss.hp / boss.maxHp, 0, 1), 14);
+    c.fillStyle = '#fff'; c.fillRect(x + w * CONFIG.zombies.boss.phase2.hpPct - 1, y + 6, 2, 18);
+    c.textAlign = 'center';
+  }
+  if (S.phase === 'rest' && !S.over) {
+    c.font = 'bold 18px ' + FONT; c.lineWidth = 4; c.strokeStyle = '#000';
+    const txt = t('hud.next', { n: Math.ceil(S.timer) });
+    c.strokeText(txt, CW / 2, 32); c.fillStyle = '#e8ecf2'; c.fillText(txt, CW / 2, 32);
+  }
+  if (S.banner) {
+    const b = S.banner; c.globalAlpha = clamp(Math.min(b.t, b.max - b.t) / .5, 0, 1);
+    c.font = 'bold 46px ' + FONT; c.lineWidth = 7; c.strokeStyle = '#000'; c.strokeText(b.text, CW / 2, 130);
+    c.fillStyle = '#ffd54a'; c.fillText(b.text, CW / 2, 130);
+    c.font = 'bold 22px ' + FONT; c.lineWidth = 5; c.strokeText(b.sub, CW / 2, 164);
+    c.fillStyle = '#fff'; c.fillText(b.sub, CW / 2, 164);
+    c.globalAlpha = 1;
+  }
+}
+
+/* ========================= 6) UI ========================= */
+const UI = {
+  shopRefs: [], shopOpen: false, acc: 0,
+
+  modalOpen() { return !$('settingsModal').classList.contains('hidden') || !$('howtoModal').classList.contains('hidden') || !$('charShop').classList.contains('hidden') || !$('upShop').classList.contains('hidden'); },
+
+  init() {
+    // เมนู
+    $('mPlay').onclick = () => { UI.buildStageGrid(); showScreen('stages'); };
+    $('mShop').onclick = () => UI.openCharShop();
+    $('mUp').onclick = () => UI.openUp();
+    $('upClose').onclick = $('upClose2').onclick = () => UI.closeUp();
+    $('csClose').onclick = $('csClose2').onclick = () => UI.closeCharShop();
+    $('mHow').onclick = () => UI.openHowto();
+    $('mSet').onclick = () => UI.openSettings();
+    $('mBack').onclick = () => showScreen('menu');
+    // ในเกม
+    $('btnVill').onclick = buyVillager;
+    $('btnPolice').onclick = buyPolice;
+    $('btnBar').onclick = upgradeBarricade;
+    $('btnRepair').onclick = repairBarricade;
+    $('btnRepairBase').onclick = repairBase;
+    $('btnShop').onclick = () => UI.openShop();
+    $('btnShopClose').onclick = () => UI.closeShop();
+    $('btnSkip').onclick = skipRest;
+    $('btnPause').onclick = () => { if (!S.over) S.paused = !S.paused; };
+    $('btnSpeed').onclick = () => { S.speed = S.speed === 1 ? 2 : S.speed === 2 ? 3 : 1; };
+    $('btnHow').onclick = () => UI.openHowto();
+    $('btnSet').onclick = () => UI.openSettings();
+    $('btnMenu').onclick = () => { UI.closeShop(); showScreen('menu'); };
+    $('btnEquipBest').onclick = () => { autoEquip(); UI.buildShop(); };
+    // ตั้งค่า
+    $('setSfx').oninput = e => { Settings.sfx = e.target.value / 100; $('setSfxV').textContent = e.target.value + '%'; Sound.applyVol(); Settings.save(); };
+    $('setSfx').onchange = () => Sound.play('buy');
+    $('setMusic').oninput = e => { Settings.music = e.target.value / 100; $('setMusicV').textContent = e.target.value + '%'; Sound.applyVol(); Settings.save(); };
+    $('setMute').onchange = e => { Settings.mute = e.target.checked; Sound.applyVol(); Settings.save(); };
+    $('langTh').onclick = () => UI.setLang('th');
+    $('langEn').onclick = () => UI.setLang('en');
+    $('setClose').onclick = () => $('settingsModal').classList.add('hidden');
+    $('hwClose').onclick = () => { Settings.howtoNever = $('hwNever').checked; Settings.save(); $('howtoModal').classList.add('hidden'); };
+  },
+  setLang(l) {
+    lang = l; Settings.lang = l; Settings.save();
+    I18N.apply(); UI.syncSettings(); UI.buildStageGrid();
+    UI.refreshMenuCoins(); if (UI.charShopOpen) UI.buildCharShop(); if (UI.upOpen) UI.buildUp();
+    if (S && screen === 'game') { UI.buildShop(); UI.buildTeamStrip(); UI.update(); if (S.over) UI.showResult(S.cleared); }
+  },
+  syncSettings() {
+    $('setSfx').value = Math.round(Settings.sfx * 100); $('setSfxV').textContent = Math.round(Settings.sfx * 100) + '%';
+    $('setMusic').value = Math.round(Settings.music * 100); $('setMusicV').textContent = Math.round(Settings.music * 100) + '%';
+    $('setMute').checked = !!Settings.mute;
+    $('langTh').classList.toggle('on', lang === 'th'); $('langEn').classList.toggle('on', lang === 'en');
+  },
+  openSettings() { UI.syncSettings(); $('settingsModal').classList.remove('hidden'); },
+  openHowto() { $('hwNever').checked = !!Settings.howtoNever; $('howtoModal').classList.remove('hidden'); },
+
+  buildStageGrid() {
+    const g = $('stageGrid'); g.innerHTML = '';
+    for (let n = 1; n <= CONFIG.stages.count; n++) {
+      const b = document.createElement('button'), locked = n > Save.maxStage, stars = Math.ceil(n / 4);
+      if (Save.cleared[n]) b.classList.add('cleared');
+      b.disabled = locked;
+      b.innerHTML = '<b>' + (locked ? '🔒' : Save.cleared[n] ? n + ' ✔' : n) + '</b><small>' + '★'.repeat(stars) + '☆'.repeat(5 - stars) + '</small>';
+      b.title = t('stage', { n });
+      b.onclick = () => startStage(n);
+      g.appendChild(b);
+    }
+  },
+
+  onNewGame() {
+    $('overlay').classList.add('hidden');
+    UI.closeShop();
+    UI.buildShop();
+    UI.buildTeamStrip();
+  },
+  showResult(win) {
+    UI.closeShop();
+    if (!S.rewarded) {
+      S.rewarded = true; const waves = win ? S.maxWaves : Math.max(0, S.wave - 1);
+      const base = 20, wv = 15 * waves, clear = win ? 50 + 10 * S.stage : 0, perfect = win && !S.lost ? 30 : 0, rw = base + wv + clear + perfect;
+      S.reward = { waves, base, wv, clear, perfect, rw }; Save.coins += rw; Save.save();
+    }
+    const h = $('ovTitle'), A1 = $('btnOvA'), B1 = $('btnOvB');
+    h.className = win ? 'win' : '';
+    if (win) {
+      const last = S.stage >= CONFIG.stages.count;
+      h.textContent = t('win.title', { n: S.stage });
+      $('overText').textContent = t('win.text', { k: S.kills }) + (last ? '  ' + t('win.all') : '');
+      if (last) { A1.classList.add('hidden'); } else { A1.classList.remove('hidden'); A1.children[0].textContent = t('win.next'); A1.onclick = () => startStage(S.stage + 1); }
+      B1.children[0].textContent = t('win.replay'); B1.onclick = () => startStage(S.stage);
+      let C1 = $('btnOvC'); if (!C1) { C1 = document.createElement('button'); C1.id = 'btnOvC'; C1.className = 'gray'; C1.innerHTML = '<b></b>'; $('overlay').appendChild(C1); }
+      C1.children[0].textContent = t('over.stages'); C1.classList.remove('hidden'); C1.onclick = () => { UI.buildStageGrid(); showScreen('stages'); };
+    } else {
+      h.textContent = t('over.title');
+      $('overText').textContent = t('over.text', { w: S.wave, m: S.maxWaves, k: S.kills });
+      A1.classList.remove('hidden'); A1.children[0].textContent = t('over.retry'); A1.onclick = () => startStage(S.stage);
+      B1.children[0].textContent = t('over.stages'); B1.onclick = () => { UI.buildStageGrid(); showScreen('stages'); };
+      const C1 = $('btnOvC'); if (C1) C1.classList.add('hidden');
+    }
+    const R = S.reward, row = (a, b, cl) => '<div' + (cl ? ' class="' + cl + '"' : '') + '><span>' + a + '</span><span>' + b + '</span></div>';
+    const fallen = S.fallen.length ? '<div class="mut">' + t('res.fallen', { n: S.fallen.map(x => t('cls.' + x)).join(', ') }) + '</div>' : '';
+    $('overText').innerHTML += '<br><div class="resbox">' + row(t('res.lost'), S.lost) + row(t('res.base'), Math.ceil(S.baseHp) + '/' + CONFIG.base.maxHp) + fallen +
+      '<div class="mut">' + t('res.run', { n: fmt(S.money) }) + '</div>' +
+      '<div style="margin-top:6px;color:#9fb8e0"><b>' + t('res.head') + '</b></div>' +
+      row(t('res.b.base'), '+' + R.base) + row(t('res.b.wave', { n: R.waves }), '+' + R.wv) +
+      (R.clear ? row(t('res.b.clear'), '+' + R.clear) : '') + (R.perfect ? row(t('res.b.perfect'), '+' + R.perfect) : '') +
+      row(t('res.b.total'), '+' + R.rw + ' 🪙', 'tot') + row(t('res.b.all'), fmt(Save.coins) + ' 🪙') + '</div>';
+    let D1 = $('btnOvD'); if (!D1) { D1 = document.createElement('button'); D1.id = 'btnOvD'; D1.className = 'orange'; D1.innerHTML = '<b></b>'; D1.onclick = () => UI.openCharShop(); $('overlay').appendChild(D1); }
+    D1.children[0].textContent = '🛒 ' + t('res.shop');
+    let E1 = $('btnOvE'); if (!E1) { E1 = document.createElement('button'); E1.id = 'btnOvE'; E1.className = 'orange'; E1.innerHTML = '<b></b>'; E1.onclick = () => UI.openUp(); $('overlay').appendChild(E1); }
+    E1.children[0].textContent = '⬆ ' + t('res.up');
+    $('overlay').classList.remove('hidden');
+  },
+
+  /* ---- อัปเกรดถาวร ---- */
+  upOpen: false,
+  upNote(msg, ok) { const e = $('upMsg'); e.textContent = msg; e.style.color = ok ? '#7fe09a' : '#ff9a8a'; },
+  openUp() { UI.upOpen = true; $('upMsg').textContent = ''; UI.buildUp(); $('upShop').classList.remove('hidden'); },
+  closeUp() { UI.upOpen = false; $('upShop').classList.add('hidden'); UI.refreshMenuCoins(); },
+  upBuy(kind, key) {
+    let lvl, max, cost, name;
+    if (kind === 'perm') { const P = CONFIG.perm[key]; lvl = permLvl(key); max = P.values.length; cost = P.cost[lvl]; name = t('up.n.' + key); }
+    else { const g = CONFIG.guns.find(x => x.id === key); lvl = gunLvl(key); max = 3; cost = gunUpCost(g, lvl); name = t('gun.' + key); }
+    if (lvl >= max) return;                                            // ขั้นสูงสุดแล้ว
+    if (Save.coins < cost) return UI.upNote(t('up.why', { n: cost - Save.coins }), false);
+    Save.coins -= cost; if (kind === 'perm') Save.up[key] = lvl + 1; else Save.up.gun[key] = lvl + 1;
+    Save.sanitize(); Save.save(); Sound.play('buy'); UI.buildUp(); UI.refreshMenuCoins(); UI.upNote(t('up.ok', { n: name }), true);
+  },
+  buildUp() {
+    $('upInfo').innerHTML = '<div class="chip gold">🪙 ' + t('cs.coins') + ' <b>' + fmt(Save.coins) + '</b></div>';
+    const mkRow = (parent, color, name, lvl, max, desc, cost, onBuy) => {
+      const row = document.createElement('div'); row.className = 'row'; row.style.borderLeftColor = color;
+      const done = lvl >= max, short = !done && Save.coins < cost;
+      row.innerHTML = '<div class="info"><b style="color:' + color + '">' + name + '</b> <span style="color:var(--gold);letter-spacing:2px">' + '●'.repeat(lvl) + '○'.repeat(max - lvl) + '</span><br>' + desc +
+        (short ? '<br><span style="color:#ff9a8a;font-size:12px">' + t('up.why', { n: cost - Save.coins }) + '</span>' : '') + '</div>';
+      const b = document.createElement('button'); b.className = done ? 'gray' : 'green'; b.innerHTML = '<b>' + (done ? t('up.max') : t('up.buy', { c: cost })) + '</b>';
+      b.disabled = done || short; b.onclick = onBuy; row.appendChild(b); parent.appendChild(row);
+    };
+    const sections = [['upVill', ['villIncome', 'villStart', 'villMax'], '#7fe09a'], ['upPol', ['polStart', 'polMax'], '#6aa0ff'], ['upSp', ['spHp', 'spAtk', 'spSlots'], '#ffb020']];
+    for (const [box, keys, color] of sections) {
+      const el = $(box); el.innerHTML = '';
+      for (const k of keys) {
+        const P = CONFIG.perm[k], l = permLvl(k), pct = k === 'spHp' || k === 'spAtk', cur = permVal(k), nx = l < P.values.length ? P.values[l] : cur;
+        const f = v => pct ? Math.round(v * 100) : v;
+        mkRow(el, color, t('up.n.' + k), l, P.values.length, t('up.d.' + k, { a: f(cur), b: f(nx) }), P.cost[l], () => UI.upBuy('perm', k));
+      }
+    }
+    const G = $('upGuns'); G.innerHTML = '';
+    CONFIG.guns.forEach(g => {
+      const l = gunLvl(g.id), cur = gunAt(g, l), nx = l < 3 ? gunAt(g, l + 1) : cur, f = (a, b) => a === b ? String(a) : a + ' → ' + b;
+      const dm = x => (g.pellets ? +x.dmg.toFixed(1) + '×' + g.pellets : +x.dmg.toFixed(1));
+      const desc = t('up.gun.stat', { d: f(dm(cur), dm(nx)), r: f(cur.rate, nx.rate), m: f(cur.mag, nx.mag), rl: f(cur.reload, nx.reload), rg: f(cur.range, nx.range) });
+      mkRow(G, g.color, '[' + g.rarity + '] ' + t('gun.' + g.id), l, 3, desc, l < 3 ? gunUpCost(g, l) : 0, () => UI.upBuy('gun', g.id));
+    });
+  },
+
+  /* ---- ร้านค้าตัวละครพิเศษ ---- */
+  charShopOpen: false, tm: [],
+  csNote(msg, ok) { const e = $('csMsg'); e.textContent = msg; e.style.color = ok ? '#7fe09a' : '#ff9a8a'; },
+  openCharShop() { UI.charShopOpen = true; $('csMsg').textContent = ''; UI.buildCharShop(); $('charShop').classList.remove('hidden'); },
+  closeCharShop() { UI.charShopOpen = false; $('charShop').classList.add('hidden'); UI.refreshMenuCoins(); },
+  refreshMenuCoins() { $('menuCoins').textContent = fmt(Save.coins); },
+  csBuy(id) {
+    const K = CONFIG.specials[id];
+    if (!SPECIAL_IDS.includes(id) || Save.owned[id]) return UI.csNote(t('cs.why.owned'), false);
+    if (Save.coins < K.cost) return UI.csNote(t('cs.why.coin', { n: K.cost - Save.coins }), false);
+    Save.coins -= K.cost; Save.owned[id] = true; Save.save(); Sound.play('buy');
+    UI.buildCharShop(); UI.refreshMenuCoins(); UI.csNote(t('cs.ok.buy', { n: t('cls.' + id) }), true);
+  },
+  csToggle(id) {
+    const slots = teamSlots(), i = Save.team.indexOf(id);
+    if (!Save.owned[id]) return UI.csNote(t('cs.why.own'), false);
+    if (i >= 0) { Save.team.splice(i, 1); UI.csNote(t('cs.ok.rem', { n: t('cls.' + id) }), true); }
+    else {
+      if (Save.team.length >= slots) return UI.csNote(t('cs.why.full', { n: Save.team.length, m: slots }), false);
+      Save.team.push(id); UI.csNote(t('cs.ok.dep', { n: t('cls.' + id) }), true);
+    }
+    Save.sanitize(); Save.save(); Sound.play('buy'); UI.buildCharShop();
+  },
+  buildCharShop() {
+    const C = CONFIG.specials, slots = teamSlots(), hpMul = 1 + permVal('spHp'), dmMul = 1 + permVal('spAtk');
+    const teamCost = Save.team.reduce((a, id) => a + C[id].cost, 0);
+    $('csInfo').innerHTML = '<div class="chip gold">🪙 ' + t('cs.coins') + ' <b>' + fmt(Save.coins) + '</b></div>' +
+      '<div class="chip">' + t('cs.slots', { n: Save.team.length, m: slots }) + '</div><div class="chip">' + t('cs.teamcost', { c: teamCost }) + '</div>';
+    const stat = id => { const K = C[id], A = K.atk; return { dps: Math.round(A.dmg * dmMul / A.interval), rate: (1 / A.interval).toFixed(2) + t('sp.persec') }; };
+    // ช่องทีม
+    const T = $('csTeam'); T.innerHTML = '';
+    for (let i = 0; i < slots; i++) {
+      const id = Save.team[i], d = document.createElement('div');
+      if (!id) { d.className = 'slot'; d.innerHTML = '<div class="em">' + t('cs.empty') + '</div>'; }
+      else {
+        const K = C[id]; d.className = 'slot full';
+        d.innerHTML = '<canvas class="pcv" width="72" height="90" data-cls="' + id + '"></canvas><div><b style="color:' + K.color + '">' + K.icon + ' ' + t('cls.' + id) + '</b><br>' +
+          t('sp.hp') + ' ' + Math.round(K.hp * hpMul) + ' • ' + t('sp.dps') + ' ' + stat(id).dps + '<br><button class="red"><b>' + t('cs.remove') + '</b></button></div>';
+        d.querySelector('button').onclick = () => UI.csToggle(id);
+      }
+      T.appendChild(d);
+    }
+    // การ์ดตัวละคร
+    const G = $('csCards'); G.innerHTML = '';
+    SPECIAL_IDS.forEach(id => {
+      const K = C[id], A = K.atk, owned = !!Save.owned[id], inTeam = Save.team.includes(id), st = stat(id);
+      const d = document.createElement('div'); d.className = 'ccard' + (owned ? ' owned' : ''); d.style.setProperty('--cc', K.color);
+      let ab;
+      if (K.type === 'melee' && !K.taunt) ab = t('ab.fighter', { rg: A.range });
+      else if (K.type === 'ranged') ab = t('ab.rifleman', { m: A.mag, rl: A.reload });
+      else if (K.type === 'sniper') ab = t('ab.sniper', { m: A.mag, rl: A.reload });
+      else if (K.type === 'support') { const R = K.repair; ab = t('ab.medic', { hp: R.hp, iv: R.interval, rg: R.range, h: R.heal, c: R.costPerHp }); }
+      else if (K.type === 'lure') { const B = K.ability; ab = t('ab.grenadier', { r: B.radius, d: B.dur, cd: B.cd, n: B.charges }); }
+      else ab = t('ab.heavy', { p: Math.round(K.taunt.chance * 100), a: Math.round((K.armor || 0) * 100) });
+      const whyBuy = owned ? '' : (Save.coins < K.cost ? t('cs.why.coin', { n: K.cost - Save.coins }) : t('cs.after', { n: Save.coins - K.cost }));
+      const full = !inTeam && Save.team.length >= slots;
+      const whyDep = !owned ? t('cs.why.own') : (full ? t('cs.why.full', { n: Save.team.length, m: slots }) : '');
+      d.innerHTML = '<div class="hd"><canvas class="pcv" width="72" height="90" data-cls="' + id + '"></canvas><div><b style="color:' + K.color + '">' + K.icon + ' ' + t('cls.' + id) + '</b>' +
+        '<small>' + t('role.' + id) + '</small><div style="color:var(--gold);font-weight:bold">🪙 ' + K.cost + '</div></div></div>' +
+        '<div class="stats"><span>' + t('sp.hp') + ' <b>' + Math.round(K.hp * hpMul) + '</b></span><span>' + t('sp.dmg') + ' <b>' + +(A.dmg * dmMul).toFixed(1) + '</b></span>' +
+        '<span>' + t('sp.rate') + ' <b>' + st.rate + '</b></span><span>' + t('sp.dps') + ' <b>' + st.dps + '</b></span>' +
+        '<span>' + t('sp.range') + ' <b>' + (K.type === 'melee' ? t('sp.melee') + ' ' + A.range : A.range) + '</b></span><span>' + t('sp.move') + ' <b>' + K.speed + '</b></span></div>' +
+        '<div>⚙ ' + ab + '</div><div class="pro">👍 ' + t('pro.' + id) + '</div><div class="con">👎 ' + t('con.' + id) + '</div><div class="use">🎯 ' + t('use.' + id) + '</div>' +
+        '<div class="btns"><button class="' + (owned ? 'gray' : 'green') + '" data-a="buy"><b>' + (owned ? t('cs.owned') : t('cs.buy', { c: K.cost })) + '</b></button>' +
+        '<button class="' + (inTeam ? 'red' : 'orange') + '" data-a="dep"><b>' + (inTeam ? t('cs.remove') : t('cs.deploy')) + '</b></button></div>' +
+        '<div class="why' + (!owned && Save.coins >= K.cost ? ' ok' : '') + '">' + (whyBuy || '') + '</div><div class="why">' + whyDep + '</div>';
+      const bb = d.querySelector('[data-a=buy]'), bd = d.querySelector('[data-a=dep]');
+      bb.disabled = owned || Save.coins < K.cost; bd.disabled = !owned || full;
+      bb.onclick = () => UI.csBuy(id); bd.onclick = () => UI.csToggle(id);
+      G.appendChild(d);
+    });
+    document.querySelectorAll('#charShop canvas[data-cls]').forEach(cvs => drawPortrait(cvs, cvs.dataset.cls));
+  },
+  buildTeamStrip() {
+    const el = $('teamStrip'); el.innerHTML = ''; UI.tm = [];
+    el.classList.toggle('hidden', !S || !S.specials.length); if (!S) return;
+    S.specials.forEach(u => {
+      const d = document.createElement('div'); d.className = 'tm';
+      d.innerHTML = '<canvas width="72" height="90"></canvas><div><b style="color:' + CONFIG.specials[u.cls].color + '">' + t('cls.' + u.cls) + '</b><div class="mini"><i></i></div><small></small></div>';
+      drawPortrait(d.querySelector('canvas'), u.cls); el.appendChild(d);
+      UI.tm.push({ u, d, bar: d.querySelector('i'), st: d.querySelector('small') });
+    });
+  },
+  updateTeamStrip() {
+    for (const r of UI.tm) {
+      const u = r.u, K = CONFIG.specials[u.cls];
+      r.bar.style.width = (u.hp / u.maxHp * 100) + '%'; r.d.classList.toggle('dead', u.dead);
+      r.st.textContent = u.dead ? t('tm.dead') : u.reload > 0 ? t('tm.reload') : u.work === 'repair' ? t('tm.repair') : u.work === 'heal' ? t('tm.heal')
+        : K.ability ? (u.charges <= 0 ? t('tm.lure', { n: 0 }) : u.abCd > 0 ? t('tm.lurecd', { s: Math.ceil(u.abCd) }) : t('tm.lure', { n: u.charges })) : t('tm.ready');
+    }
+  },
+
+  openShop() { UI.shopOpen = true; UI.buildShop(); $('shop').classList.remove('hidden'); },
+  closeShop() { UI.shopOpen = false; $('shop').classList.add('hidden'); },
+  refreshShop() { if (UI.shopOpen) UI.buildShop(); },
+
+  setBtn(id, title, sub, ok) {
+    const b = $(id); b.children[0].textContent = title; b.children[1].textContent = sub; b.disabled = !ok;
+  },
+
+  buildShop() {
+    if (!S) return;
+    UI.shopRefs = [];
+    const G = $('shopGuns'), U = $('shopUpg'), P = $('shopPolice');
+    G.innerHTML = ''; U.innerHTML = ''; P.innerHTML = '';
+    const mk = (parent, color, html, onBuy, refresh) => {
+      const row = document.createElement('div'); row.className = 'row'; row.style.borderLeftColor = color;
+      row.innerHTML = '<div class="info">' + html + '</div>';
+      const btn = document.createElement('button'); btn.className = 'green'; btn.innerHTML = '<b></b>';
+      btn.onclick = onBuy; row.appendChild(btn); parent.appendChild(row);
+      UI.shopRefs.push(() => refresh(btn));
+    };
+    S.gcfg.forEach((g, i) => {
+      const note = t('gun.note.' + g.id);
+      mk(G, g.color,
+        '<b style="color:' + g.color + '">[' + g.rarity + '] ' + t('gun.' + g.id) + (g.lvl ? ' ★' + g.lvl : '') + '</b><br>' +
+        t('shop.stat', { d: g.pellets ? +g.dmg.toFixed(1) + '×' + g.pellets : +g.dmg.toFixed(1), r: +g.rate.toFixed(2), dps: Math.round(g.dmg * (g.pellets || 1) * g.rate) }) + '<br>' +
+        (note !== 'gun.note.' + g.id ? '<span style="color:#9fb8e0">' + note + '</span><br>' : '') +
+        t('shop.stat2', { m: g.mag, rl: g.reload, rg: g.range }) + '<br><span style="color:#8fa0b8">' + t('shop.owned', { n: S.boughtTier[i] }) + '</span>',
+        () => buyGun(i),
+        btn => {
+          const tx = btn.children[0];
+          if (!gunUnlocked(i)) { tx.textContent = t('shop.lock', { g: t('gun.' + CONFIG.guns[i - 1].id) }); btn.disabled = true; }
+          else { const p = gunPrice(i); tx.textContent = t('shop.buy', { p: fmt(p) }); btn.disabled = S.money < p; }
+        });
+    });
+    for (const k of ['pierce', 'explode']) {
+      const u = CONFIG.upgrades[k], g = CONFIG.guns[u.needGun];
+      const desc = k === 'pierce' ? t('upg.pierce.d', { c: u.count, f: Math.round((1 - u.falloff) * 100) }) : t('upg.explode.d', { r: u.radius, s: Math.round(u.splash * 100) });
+      mk(U, g.color, '<b style="color:' + g.color + '">' + t('upg.' + k) + '</b><br>' + desc,
+        () => buyUpgrade(k),
+        btn => {
+          const tx = btn.children[0];
+          if (S.upg[k]) { tx.textContent = t('shop.done'); btn.disabled = true; }
+          else if (S.boughtTier[u.needGun] <= 0) { tx.textContent = t('shop.needGun', { g: t('gun.' + g.id) }); btn.disabled = true; }
+          else { tx.textContent = t('shop.buy', { p: fmt(u.price) }); btn.disabled = S.money < u.price; }
+        });
+    }
+    // จัดปืนให้ตำรวจรายคน (ปืน 1 กระบอก ใส่ได้ 1 นาย)
+    if (!S.police.length) P.innerHTML = '<div style="color:#8fa0b8;font-size:13px">' + t('shop.nopolice') + '</div>';
+    S.police.forEach((p, pi) => {
+      if (p.dead) return;
+      const row = document.createElement('div'); row.className = 'row';
+      row.innerHTML = '<div class="info"><b>' + t('shop.police', { n: pi + 1 }) + '</b></div>';
+      const sel = document.createElement('select');
+      let opts = '<option value="-1">' + t('shop.none') + '</option>';
+      S.guns.forEach((gi, idx) => {
+        if (gi.owner === -1 || gi.owner === pi) { const g = CONFIG.guns[gi.tier]; opts += '<option value="' + idx + '">' + t('gun.' + g.id) + ' #' + (idx + 1) + ' (' + g.dmg + ')</option>'; }
+      });
+      sel.innerHTML = opts; sel.value = String(p.gun);
+      sel.onchange = () => { equip(pi, parseInt(sel.value, 10)); UI.buildShop(); };
+      row.appendChild(sel); P.appendChild(row);
+    });
+    UI.shopRefs.forEach(f => f());
+  },
+
+  update() {
+    if (!S) return;
+    const E = CONFIG.economy, Pc = E.police;
+    $('uMoney').textContent = fmt(S.money);
+    $('uIncome').textContent = '+' + fmt(S.villagers * S.incomePer) + t('persec');
+    $('uVill').textContent = S.villagers + '/' + S.villMax;
+    $('uPol').textContent = livePolice().length + '/' + S.policeMax + (S.lost ? ' 💀' + S.lost : '');
+    $('uSp').textContent = S.specials.filter(u => !u.dead).length + '/' + S.specials.length;
+    UI.updateTeamStrip();
+    const wv = clamp(S.phase === 'fight' ? S.wave : S.nextWave, 1, S.maxWaves), tier = tierOf(wv);
+    const left = S.spawnQ.length + S.zombies.filter(z => z.state !== 'die').length;
+    $('uWave').innerHTML = t('hud.wave', { s: S.stage, w: wv, m: S.maxWaves }) +
+      ' <b style="color:' + tier.color + ';font-size:13px">(' + t('tier' + tier.i) + ')</b>';
+    $('uTimer').textContent = S.phase === 'fight' ? t('hud.left', { n: left }) : t('hud.rest', { n: Math.ceil(S.timer) });
+    $('uBarLv').textContent = S.barLevel;
+    const bm = barMaxHp();
+    $('barBar').style.width = (S.barHp / bm * 100) + '%'; $('barTxt').textContent = Math.ceil(S.barHp) + '/' + bm;
+    $('baseBar').style.width = (S.baseHp / CONFIG.base.maxHp * 100) + '%'; $('baseTxt').textContent = Math.ceil(S.baseHp) + '/' + CONFIG.base.maxHp;
+
+    const vc = villagerCost(), vmax = S.villagers >= S.villMax;
+    UI.setBtn('btnVill', t('b.vill'), vmax ? t('b.vill.max', { n: S.villMax }) : t('b.vill.sub', { c: fmt(vc), i: S.incomePer }), !vmax && S.money >= vc);
+    const pc = policeCost(), canConv = S.villagers - Pc.villagersRequired >= Pc.minVillagersLeft;
+    const polCap = livePolice().length >= S.policeMax;
+    UI.setBtn('btnPolice', t('b.police'), polCap ? t('b.police.max', { n: S.policeMax }) : t('b.police.sub', { v: Pc.villagersRequired, c: fmt(pc) }), !polCap && S.money >= pc && canConv);
+    const uc = barUpgradeCost();
+    UI.setBtn('btnBar', t('b.bar'), uc == null ? t('b.bar.max') : 'Lv' + S.barLevel + '→' + (S.barLevel + 1) + ' • ฿' + fmt(uc), uc != null && S.money >= uc);
+    const rc = repairCost();
+    UI.setBtn('btnRepair', t('b.repair'), rc > 0 ? '฿' + fmt(rc) : t('b.full'), rc > 0 && S.money >= rc);
+    const bc = baseRepairCost();
+    UI.setBtn('btnRepairBase', t('b.repairBase'), bc > 0 ? '฿' + fmt(bc) : t('b.full'), bc > 0 && S.money >= bc);
+    UI.setBtn('btnShop', t('b.shop'), t('b.shop.sub'), true);
+    UI.setBtn('btnSkip', t('b.skip'), S.phase === 'rest' ? t('b.skip.sub1') : t('b.skip.sub2'), S.phase === 'rest' && !S.over);
+    UI.setBtn('btnPause', S.paused ? t('b.resume') : t('b.pause'), '', !S.over);
+    UI.setBtn('btnSpeed', t('b.speed', { n: S.speed }), t('b.speed.sub'), true);
+    UI.setBtn('btnHow', t('b.howto'), '', true);
+    UI.setBtn('btnSet', t('b.settings'), '', true);
+    UI.setBtn('btnMenu', t('b.menu'), '', true);
+    if (UI.shopOpen) UI.shopRefs.forEach(f => f());
+  }
+};
+
+/* ========================= เมนู: ฉากพิกเซลเคลื่อนไหว (วาดอย่างเดียว ไม่แตะตรรกะเกม) ========================= */
+const Menu = (() => {
+  const cvm = $('menuCv'), g = cvm.getContext('2d'), W = 320, H = 180, gy = 128;
+  cvm.width = W; cvm.height = H;
+  let sd = 11; const r = () => (sd = sd * 16807 % 2147483647) / 2147483647;
+  const far = [], mid = [], stars = [], zs = [], em = [];
+  for (let x = -4; x < W;) { const w = 14 + r() * 22; far.push({ x, w, h: 30 + r() * 40 }); x += w + 2; }
+  for (let x = -4; x < W;) { const w = 20 + r() * 26, h = 40 + r() * 50, win = []; for (let wy = 8; wy < h - 6; wy += 9) for (let wx = 4; wx < w - 6; wx += 8) if (r() > .6) win.push([wx, wy, r() * 6.28]); mid.push({ x, w, h, win }); x += w + 4; }
+  for (let i = 0; i < 40; i++) stars.push([r() * W | 0, r() * 70 | 0, r() * 6.28]);
+  for (let i = 0; i < 8; i++) zs.push({ x0: 100 + i * 34 + r() * 18, y: 138 + r() * 28 | 0, sp: 4 + r() * 5, p: r() * 6 });
+  const bands = ['#0d1226', '#121a36', '#18224a', '#232a5a', '#3a3366', '#5a3d6a', '#8a4a58'];
+  const R = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x | 0, y | 0, w, h); };
+  return {
+    draw(now) {
+      const t = now / 1000, bh = gy / bands.length;
+      bands.forEach((col, i) => R(col, 0, i * bh, W, Math.ceil(bh) + 1));
+      for (const [x, y, p] of stars) R(Math.sin(t * 2 + p) > -.3 ? '#dfe6ff' : '#5a6498', x, y, 1, 1);
+      R('#f2e7bd', 240, 16, 14, 14); R('#d6c88f', 245, 21, 4, 4);
+      for (let i = 0; i < 5; i++) { const x = ((i * 83 - t * (3 + i)) % (W + 80) + W + 80) % (W + 80) - 40, y = 14 + i * 12 | 0; R('rgba(130,120,170,.35)', x, y, 38, 4); R('rgba(130,120,170,.35)', x + 8, y - 4, 22, 4); }
+      for (const b of far) R('#141a33', b.x, gy - b.h, b.w, b.h);
+      for (const b of mid) { R('#1c2342', b.x, gy - b.h, b.w, b.h); for (const [wx, wy, p] of b.win) R(Math.sin(t * 2 + p) > -.6 ? '#ffb347' : '#2a2f4c', b.x + wx, gy - b.h + wy, 3, 4); }
+      R('#2c2e44', 0, gy, W, H - gy); R('#3f4260', 0, gy, W, 2);
+      for (let x = 6; x < W; x += 30) R('#555a78', x, 160, 14, 1);
+      for (const z of zs) {                       // ซอมบี้เดินเข้าหากำแพง
+        const x = 96 + (((z.x0 - 96 - t * z.sp) % 240) + 240) % 240, y = z.y, b = Math.abs(Math.sin(t * 6 + z.p)) | 0;
+        R('#000', x - 3, y, 8, 1); R('#2b3a33', x - 2, y - 10, 5, 7); R('#7fae6a', x - 2, y - 14, 5, 4); R('#ff3b30', x - 3, y - 12, 1, 1);
+        R('#7fae6a', x - 7, y - 10 + b, 5, 2); R('#242b3a', x - 2, y - 3, 2, 3); R('#242b3a', x + 1, y - 3, 2, 3);
+      }
+      R('#5b4a3a', 8, 84, 46, 44); R('#3b2d22', 4, 78, 54, 8);          // บ้าน/ฐาน
+      R(Math.sin(t * 3) > -.7 ? '#ffd27a' : '#6a4a22', 18, 98, 8, 8); R(Math.sin(t * 3 + 2) > -.7 ? '#ffd27a' : '#6a4a22', 36, 98, 8, 8);
+      for (let y = 100; y < gy; y += 10) { R('#4a4358', 62, y, 22, 10); R('#2e2a3a', 62, y + 9, 22, 1); R('#5a536a', 62, y, 22, 1); }   // กำแพง
+      for (let y = 96; y < gy; y += 10) R('#3a3548', 62, y, 22, 4);
+      for (let x = 62; x < 84; x += 8) R('#5a536a', x, 90, 6, 8);
+      const f = Math.sin(t * 11) * Math.sin(t * 7.3), fl = 4 + (f * 2 | 0);  // คบเพลิง
+      R('#5a3a22', 85, 100, 2, 12); R('#ff7a1a', 83, 96 - fl, 6, 4 + fl); R('#ffd54a', 85, 97 - fl, 2, 3 + fl);
+      g.save(); g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(86, 100, 1, 86, 100, 46 + f * 6);
+      gr.addColorStop(0, 'rgba(255,150,40,.4)'); gr.addColorStop(1, 'rgba(255,100,20,0)'); g.fillStyle = gr; g.fillRect(30, 55, 110, 90); g.restore();
+      if (Math.random() < .35) em.push({ x: 86 + Math.random() * 3, y: 96, vx: (Math.random() - .3) * 10, vy: -12 - Math.random() * 14, life: 1.2 });
+      for (const e of em) { e.life -= .016; e.x += e.vx * .016; e.y += e.vy * .016; R('#ffb347', e.x, e.y, 1, 1); }
+      for (let i = em.length - 1; i >= 0; i--) if (em[i].life <= 0) em.splice(i, 1);
+    }
+  };
+})();
+
+/* ========================= 7) MAIN LOOP / การนำทางหน้าจอ ========================= */
+function showScreen(name) {
+  screen = name;
+  if (name === 'menu') UI.refreshMenuCoins();
+  $('menuMain').classList.toggle('hidden', name !== 'menu');
+  $('menuStages').classList.toggle('hidden', name !== 'stages');
+  $('menuWrap').classList.toggle('hidden', name === 'game');
+  $('gameWrap').classList.toggle('hidden', name !== 'game');
+}
+function startStage(n) {
+  newGame(n);
+  showScreen('game');
+  UI.update();
+  if (n === 1 && !Settings.howtoNever) UI.openHowto();     // ด่านแรกแสดงวิธีเล่นอัตโนมัติ
+}
+
+let lastT = 0;
+function frame(now) {
+  let dt = Math.min((now - lastT) / 1000, .1); lastT = now;
+  if (screen === 'game' && S) {
+    if (!S.paused && !S.over && !UI.modalOpen()) {
+      let rem = dt * S.speed;
+      while (rem > 0) { const d = Math.min(rem, .05); update(d); rem -= d; }
+    }
+    render();
+    UI.acc += dt;
+    if (UI.acc >= .1) { UI.acc = 0; UI.update(); }
+  } else Menu.draw(now);
+  requestAnimationFrame(frame);
+}
+
+function init() {
+  Settings.load(); Save.load();
+  I18N.apply();
+  Assets.load();
+  bgCache = makeBg();
+  UI.init();
+  UI.syncSettings();
+  // เสียงต้องเริ่มหลังผู้ใช้กดอะไรสักอย่าง (ข้อจำกัดของเบราว์เซอร์)
+  document.addEventListener('pointerdown', () => { Sound.init(); Sound.resume(); });
+  document.addEventListener('click', e => { if (e.target && e.target.closest && e.target.closest('button')) Sound.play('click'); });
+  // เอฟเฟกต์ซื้อสำเร็จ: ปุ่มเรืองสีเขียว + ตัวเลขเงินที่ใช้ลอยขึ้นเหนือฐาน
+  document.addEventListener('click', e => {
+    const b = e.target && e.target.closest && e.target.closest('#controls button, #shop .row button');
+    if (!b || !S) return; const m = S.money;
+    setTimeout(() => { if (S && S.money < m - 5) { b.classList.add('bought'); addFloat(CONFIG.world.baseX + 40, CONFIG.world.baseY - 150, '-฿' + fmt(m - S.money), '#ff9a6a'); setTimeout(() => b.classList.remove('bought'), 450); } }, 0);
+  }, true);
+  UI.refreshMenuCoins();
+  showScreen('menu');
+  requestAnimationFrame(tm => { lastT = tm; frame(tm); });
+}
+init();
+
+/* =====================================================================
+   วิธีใส่ภาพ Unit และปรับบาลานซ์
+   ---------------------------------------------------------------------
+   [ใส่ภาพ]  แก้ SPRITES (หัวข้อ 2) ใส่พาธ png แทน null เช่น police: 'assets/police.png'
+     • ภาพนิ่ง: เว้น frameWidth/frameHeight เป็น null
+     • sprite sheet: ตั้ง frameWidth/frameHeight ใน SPRITE_CONFIG แล้วกำหนด anims (idle/walk/attack/die)
+     • ขนาด w,h / จุดยึด anchor / ทิศภาพต้นฉบับ facing ปรับได้ใน SPRITE_CONFIG
+     • บาริเคทแบบ sprite sheet: เฟรมที่ n = เลเวล n+1
+     • เปลี่ยนรูประหว่างเล่นในคอนโซล: Assets.set('police','assets/police.png')
+   [บาลานซ์]  แก้ CONFIG (หัวข้อ 1)
+     • รายได้/ชาวบ้านสูงสุด/ราคา → CONFIG.economy      • ปืน (ดาเมจ ระยะ แม็ก เวลาเปลี่ยนแม็ก ราคา) → CONFIG.guns
+     • อัปเกรดทะลุ/ระเบิด → CONFIG.upgrades             • ซอมบี้ → CONFIG.zombies
+     • เวฟในด่าน → CONFIG.wave                          • ความยาก 20 ด่าน → CONFIG.stages
+   [ภาษา]  เพิ่ม/แก้ข้อความที่ LANG (หัวข้อ 1b)
+   [เสียง]  สังเคราะห์ใน Sound.play (หัวข้อ 1c) ไม่ต้องใช้ไฟล์เสียง
+   ===================================================================== */
+</script>
 </body>
 </html>
